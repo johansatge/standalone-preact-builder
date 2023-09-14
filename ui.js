@@ -13,8 +13,12 @@ preact.render(html`<${App} defaultImports=${defaultImports} />`, document.body)
 
 function App({ defaultImports }) {
   const [selectedImports, setSelectedImports] = hooks.useState(defaultImports)
+  const [format, setFormat] = hooks.useState('esm')
   const [bundle, setBundle] = hooks.useState({})
   const [isLoadingBundle, setLoadingBundle] = hooks.useState(false)
+  const onFormatChange = (evt) => {
+    setFormat(evt.currentTarget.value)
+  }
   const onImportChange = (evt) => {
     const newSelectedImports = {...selectedImports}
     const pkg = evt.currentTarget.dataset.pkg
@@ -41,6 +45,7 @@ function App({ defaultImports }) {
     setLoadingBundle(true)
     const params = new URLSearchParams()
     params.set('imports', JSON.stringify(selectedImports))
+    params.set('format', format)
     let headers
     window.fetch(`/bundle?${params.toString()}`)
       .then((response) => {
@@ -60,7 +65,7 @@ function App({ defaultImports }) {
         setLoadingBundle(false)
         setBundle({ contents: `Error: ${error.message}` })
       })
-  }, [selectedImports])
+  }, [selectedImports, format])
   return html`
     <h1 class="title">Standalone Preact Generator</h1>
     <div class="column">
@@ -91,12 +96,19 @@ function App({ defaultImports }) {
         selectedImports=${selectedImports} onImportChange=${onImportChange}
       />
     </div>
+    <h2 class="subtitle">Bundle format</h2>
+    <p>
+      <select name="format" onChange=${onFormatChange}>
+        <option value="esm" selected=${format === 'esm'}>ESM</option>
+        <option value="iife" selected=${format === 'iife'}>IIFE</option>
+      </select>
+    </p>
     <h2 class="subtitle">Generated file</h2>
     <textarea class="code"
       readonly
       disabled=${isLoadingBundle}
     >${bundle.contents || ''}</textarea>
-    <p class="actions">
+    <p>
       <button onClick=${onCopyToClipboard}>Copy to clipboard</button>
       Size: ${bundle.sizeKb || 0}Kb (${bundle.sizeGzippedKb || 0}Kb gzipped)
     </p>
@@ -105,7 +117,7 @@ function App({ defaultImports }) {
       class="usage"
       readonly
       disabled=${isLoadingBundle}
-    >${bundle.usage || 'No usage'}</textarea>
+    >${(bundle.usage || 'No usage').replaceAll('<br>', '\n')}</textarea>
   `
 }
 
@@ -121,5 +133,6 @@ function ImportsList({ pkg, modules, selectedImports, onImportChange }) {
       />
       ${mod}
     </label>
+    <br />
   `)
 }

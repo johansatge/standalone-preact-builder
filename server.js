@@ -66,9 +66,11 @@ async function onServeUiJs(request, response) {
 }
 
 async function onServeBundle(request, response) {
-  const rawImports = new URL(request.url, 'http://localhost').searchParams.get('imports') || ''
+  const urlParams = new URL(request.url, 'http://localhost').searchParams
+  const rawImports = urlParams.get('imports') || ''
   const imports = JSON.parse(rawImports)
-  let bundleComments = `// Preact Standalone ${getDate()}\n`
+  const format = urlParams.get('format') || 'esm'
+  let bundleComments = `// Preact Standalone ${getDate()} (${format.toUpperCase()})\n`
   let bundleExports = []
   let bundleSource = ''
   for (const pkg in imports) {
@@ -78,13 +80,30 @@ async function onServeBundle(request, response) {
     bundleSource += `import ${importedModules} from '${pkg}';\n`
     bundleExports = [...bundleExports, ...imports[pkg]]
   }
-  bundleSource += `export { ${bundleExports.join(', ')} };\n`
+  let usage = ''
+  if (format === 'esm') {
+    bundleSource += `export { ${bundleExports.join(', ')} };\n`
+    usage = [
+      '<script type="module">',
+      `  import { ${bundleExports.join(', ')} } from "standalone-preact.js"`,
+      '</script>',
+    ].join('<br>')
+  }
+  if (format === 'iife') {
+    bundleSource += `window.StandalonePreact = { ${bundleExports.join(', ')} };\n`
+    usage = [
+      '<script src="standalone-preact.js"></script>',
+      '<script>',
+      `  const { ${bundleExports.join(', ')} } = window.StandalonePreact`,
+      '</script>',
+    ].join('<br>')
+  }
   try {
     const js = await buildBundle({
       fileOrSource: bundleSource,
       comments: bundleComments,
       type: 'string',
-      format: 'esm',
+      format,
       withMinify: true,
     })
     response.writeHead(200, {
@@ -92,7 +111,7 @@ async function onServeBundle(request, response) {
       'Cache-Control': 'no-cache, no-store',
       'X-Bundle-SizeKb': js.sizeKb,
       'X-Bundle-SizeGzippedKb': js.sizeGzippedKb,
-      'X-Bundle-Usage': `<script type="module">import { ${bundleExports.join(', ')} } from "file.js"</script>`,
+      'X-Bundle-Usage': usage,
     })
     response.end(js.contents)
   } catch(error) {
