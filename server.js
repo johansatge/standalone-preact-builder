@@ -55,7 +55,13 @@ async function onServeUiJs(request, response) {
     'Content-Type': 'application/javascript',
     'Cache-Control': 'no-cache, no-store',
   })
-  const js = await buildBundle(path.join(__dirname, 'ui.js'), '', 'file', false)
+  const js = await buildBundle({
+    fileOrSource: path.join(__dirname, 'ui.js'),
+    comments: '',
+    type: 'file',
+    format: 'iife',
+    withMinify: false,
+  })
   response.end(js.contents)
 }
 
@@ -74,13 +80,19 @@ async function onServeBundle(request, response) {
   }
   bundleSource += `export { ${bundleExports.join(', ')} };\n`
   try {
-    const js = await buildBundle(bundleSource, bundleComments, 'string', true)
+    const js = await buildBundle({
+      fileOrSource: bundleSource,
+      comments: bundleComments,
+      type: 'string',
+      format: 'esm',
+      withMinify: true,
+    })
     response.writeHead(200, {
       'Content-Type': 'application/javascript',
       'Cache-Control': 'no-cache, no-store',
       'X-Bundle-SizeKb': js.sizeKb,
       'X-Bundle-SizeGzippedKb': js.sizeGzippedKb,
-      'X-Bundle-Usage': `<script>import { ${bundleExports.join(', ')} } from "file.js"</script>`,
+      'X-Bundle-Usage': `<script type="module">import { ${bundleExports.join(', ')} } from "file.js"</script>`,
     })
     response.end(js.contents)
   } catch(error) {
@@ -107,11 +119,12 @@ async function getPackageVersion(pkg) {
   return pkgJson.version
 }
 
-async function buildBundle(fileOrSource, comments, type, withMinify) {
+async function buildBundle({ fileOrSource, comments, type, format, withMinify }) {
   const params = {
     bundle: true,
     minify: withMinify,
     write: false,
+    format,
   }
   if (type === 'file') {
     params.entryPoints = [fileOrSource]
