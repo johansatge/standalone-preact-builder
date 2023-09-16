@@ -11,7 +11,11 @@
     "type": "git",
     "url": "https://github.com/johansatge/standalone-preact"
   },
-  "keywords": ["preact", "esbuild", "generator"],
+  "keywords": [
+    "preact",
+    "esbuild",
+    "generator"
+  ],
   "license": "MIT",
   "dependencies": {
     "@preact/signals": "^1.2.1",
