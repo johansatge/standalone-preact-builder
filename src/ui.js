@@ -45,6 +45,19 @@ function App({ defaultImports }) {
     navigator.clipboard.writeText(bundle.code)
   }
 
+  const onDownload = (evt) => {
+    evt.preventDefault()
+    const blob = new Blob([bundle.code], {
+      type: 'application/javascript',
+    })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = 'standalone-preact.js'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   useEffect(() => {
     setLoadingBundle(true)
     buildBundle(selectedImports, format)
@@ -98,6 +111,7 @@ function App({ defaultImports }) {
       >${bundle.code || ''}</textarea>
       <p>
         <button onClick=${onCopyToClipboard}>Copy to clipboard</button>
+        <button onClick=${onDownload}>Download file</button>
         Size: ${bundle.sizeKb || 0}Kb (${bundle.sizeGzippedKb || 0}Kb gzipped)
       </p>
       <h2 class="subtitle">Usage</h2>
