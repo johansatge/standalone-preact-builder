@@ -49,6 +49,12 @@ async function makeDist() {
 }
 
 async function makePreactEcosystem() {
+  const availableImports = {
+    preact: Object.keys(require('preact')),
+    'preact/hooks': Object.keys(require('preact/hooks')),
+    '@preact/signals': Object.keys(require('@preact/signals')),
+    'htm': ['htm'],
+  }
   const packages = {
     preact: 'export * from "preact"',
     'preact/hooks': 'export * from "preact/hooks"',
@@ -72,6 +78,7 @@ async function makePreactEcosystem() {
     }
     ecosystem[pkg] = {
       code: result.outputFiles[0].text,
+      imports: availableImports[pkg],
       version: await getPackageVersion(pkg)
     }
   }

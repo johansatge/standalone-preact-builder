@@ -1,7 +1,6 @@
 import * as esbuild from 'esbuild-wasm'
-import * as preact from 'preact'
-import * as hooks from 'preact/hooks'
-import * as signals from '@preact/signals'
+import { h, render } from 'preact'
+import { useState, useEffect } from 'preact/hooks'
 import htm from 'htm'
 
 const esbuildInitPromise = esbuild.initialize({
@@ -109,14 +108,14 @@ const defaultImports = {
   htm: ['htm'],
 }
 
-const html = htm.bind(preact.h)
-preact.render(html`<${App} defaultImports=${defaultImports} />`, document.body)
+const html = htm.bind(h)
+render(html`<${App} defaultImports=${defaultImports} />`, document.body)
 
 function App({ defaultImports }) {
-  const [selectedImports, setSelectedImports] = hooks.useState(defaultImports)
-  const [format, setFormat] = hooks.useState('esm')
-  const [bundle, setBundle] = hooks.useState({})
-  const [isLoadingBundle, setLoadingBundle] = hooks.useState(false)
+  const [selectedImports, setSelectedImports] = useState(defaultImports)
+  const [format, setFormat] = useState('esm')
+  const [bundle, setBundle] = useState({})
+  const [isLoadingBundle, setLoadingBundle] = useState(false)
   const onFormatChange = (evt) => {
     setFormat(evt.currentTarget.value)
   }
@@ -142,7 +141,7 @@ function App({ defaultImports }) {
     evt.preventDefault()
     navigator.clipboard.writeText(bundle.code)
   }
-  hooks.useEffect(() => {
+  useEffect(() => {
     setLoadingBundle(true)
     buildBundle(selectedImports, format)
       .then((bundle) => {
@@ -156,34 +155,15 @@ function App({ defaultImports }) {
   }, [selectedImports, format])
   return html`
     <h1 class="title">Standalone Preact Generator</h1>
-    <div class="column">
-      <h2 class="subtitle">Preact</h2>
-      <${ImportsList}
-        pkg="preact" modules=${Object.keys(preact)}
-        selectedImports=${selectedImports} onImportChange=${onImportChange}
-      />
-    </div>
-    <div class="column">
-      <h2 class="subtitle">Preact Hooks</h2>
-      <${ImportsList}
-        pkg="preact/hooks" modules=${Object.keys(hooks)}
-        selectedImports=${selectedImports} onImportChange=${onImportChange}
-      />
-    </div>
-    <div class="column">
-      <h2 class="subtitle">Preact Signals</h2>
-      <${ImportsList}
-        pkg="@preact/signals" modules=${Object.keys(signals)}
-        selectedImports=${selectedImports} onImportChange=${onImportChange}
-      />
-    </div>
-    <div class="column">
-      <h2 class="subtitle">HTM</h2>
-      <${ImportsList}
-        pkg="htm" modules=${['htm']}
-        selectedImports=${selectedImports} onImportChange=${onImportChange}
-      />
-    </div>
+    ${Object.keys(window.preactEcosystem).map((pkg) => html`
+      <div class="column">
+        <h2 class="subtitle">${pkg}</h2>
+        <${ImportsList}
+          pkg="${pkg}" modules=${window.preactEcosystem[pkg].imports}
+          selectedImports=${selectedImports} onImportChange=${onImportChange}
+        />
+      </div>
+    `)}
     <h2 class="subtitle">Bundle format</h2>
     <p>
       <select name="format" onChange=${onFormatChange}>
