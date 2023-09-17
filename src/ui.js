@@ -31,7 +31,7 @@ function App({ defaultImports }) {
       }
       newSelectedImports[pkg].push(imp)
     } else {
-      const index = newSelectedImports[pkg].indexOf(newSelectedImports[pkg])
+      const index = newSelectedImports[pkg].indexOf(imp)
       newSelectedImports[pkg].splice(index, 1)
       if (newSelectedImports[pkg].length === 0) {
         delete newSelectedImports[pkg]
@@ -59,41 +59,54 @@ function App({ defaultImports }) {
   }, [selectedImports, format])
 
   return html`
-    <h1 class="title">Standalone Preact Generator</h1>
-    ${Object.keys(window.preactEcosystem).map((pkg) => html`
-      <div class="column">
-        <h2 class="subtitle">
-          ${pkg}
-          <span class="version">${window.preactEcosystem[pkg].version}</span>
-        </h2>
-        <${ImportsList}
-          pkg="${pkg}" imports=${window.preactEcosystem[pkg].imports}
-          selectedImports=${selectedImports} onImportChange=${onImportChange}
-        />
-      </div>
-    `)}
-    <h2 class="subtitle">Bundle format</h2>
-    <p>
-      <select name="format" onChange=${onFormatChange}>
-        <option value="esm" selected=${format === 'esm'}>ESM</option>
-        <option value="iife" selected=${format === 'iife'}>IIFE</option>
-      </select>
-    </p>
-    <h2 class="subtitle">Generated file</h2>
-    <textarea class="code"
-      readonly
-      disabled=${isLoadingBundle}
-    >${bundle.code || ''}</textarea>
-    <p>
-      <button onClick=${onCopyToClipboard}>Copy to clipboard</button>
-      Size: ${bundle.sizeKb || 0}Kb (${bundle.sizeGzippedKb || 0}Kb gzipped)
-    </p>
-    <h2 class="subtitle">Usage</h2>
-    <textarea
-      class="usage"
-      readonly
-      disabled=${isLoadingBundle}
-    >${(bundle.usage || 'No usage').replaceAll('<br>', '\n')}</textarea>
+    <header class="header">
+      <h1 class="title">
+        ⚛️ Standalone <a href="https://preactjs.com/">Preact</a> Builder
+      </h1>
+      <a class="help" href="https://github.com/johansatge/standalone-preact">
+        Help on GitHub
+      </a>
+    </header>
+    <section class="section">
+      ${Object.keys(window.preactEcosystem).map((pkg) => html`
+        <div class="column">
+          <h2 class="subtitle">
+            ${pkg}
+            <span class="version">${window.preactEcosystem[pkg].version}</span>
+          </h2>
+          <${ImportsList}
+            pkg="${pkg}" imports=${window.preactEcosystem[pkg].imports}
+            selectedImports=${selectedImports} onImportChange=${onImportChange}
+          />
+        </div>
+      `)}
+    </section>
+    <section class="section">
+      <h2 class="subtitle">Bundle format</h2>
+      <p>
+        <select name="format" onChange=${onFormatChange}>
+          <option value="esm" selected=${format === 'esm'}>ESM</option>
+          <option value="iife" selected=${format === 'iife'}>IIFE</option>
+        </select>
+      </p>
+    </section>
+    <section class="section">
+      <h2 class="subtitle">Generated file</h2>
+      <textarea class="code"
+        readonly
+        disabled=${isLoadingBundle}
+      >${bundle.code || ''}</textarea>
+      <p>
+        <button onClick=${onCopyToClipboard}>Copy to clipboard</button>
+        Size: ${bundle.sizeKb || 0}Kb (${bundle.sizeGzippedKb || 0}Kb gzipped)
+      </p>
+      <h2 class="subtitle">Usage</h2>
+      <textarea
+        class="usage"
+        readonly
+        disabled=${isLoadingBundle}
+      >${(bundle.usage || 'No usage').replaceAll('<br>', '\n')}</textarea>
+    </section>
   `
 }
 

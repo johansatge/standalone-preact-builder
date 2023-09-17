@@ -59,7 +59,7 @@ export async function buildBundle(requestedImports, format) {
 // generate the final bundle
 // This also returns the final bundle comments and usage example
 function getBundleSource(requestedImports, format) {
-  let bundleComments = `// Preact Standalone ${getDate()} (${format.toUpperCase()})\n`
+  let bundleComments = `// Standalone Preact ${getDate()} (${format.toUpperCase()})\n`
   let bundleExports = []
   let bundleSource = ''
   for (const pkg in requestedImports) {
