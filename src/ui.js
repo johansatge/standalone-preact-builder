@@ -157,7 +157,10 @@ function App({ defaultImports }) {
     <h1 class="title">Standalone Preact Generator</h1>
     ${Object.keys(window.preactEcosystem).map((pkg) => html`
       <div class="column">
-        <h2 class="subtitle">${pkg}</h2>
+        <h2 class="subtitle">
+          ${pkg}
+          <span class="version">${window.preactEcosystem[pkg].version}</span>
+        </h2>
         <${ImportsList}
           pkg="${pkg}" imports=${window.preactEcosystem[pkg].imports}
           selectedImports=${selectedImports} onImportChange=${onImportChange}

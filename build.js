@@ -101,7 +101,7 @@ async function makeUiScript() {
   const result = await esbuild.build({
     entryPoints: [path.join(srcPath, 'ui.js')],
     bundle: true,
-    minify: false,
+    minify: true,
     write: false,
     format: 'iife',
   })
