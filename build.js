@@ -50,22 +50,28 @@ async function makeDist() {
 
 async function makePreactEcosystem() {
   const availableImports = {
-    preact: Object.keys(require('preact')),
-    'preact/hooks': Object.keys(require('preact/hooks')),
-    '@preact/signals': Object.keys(require('@preact/signals')),
-    'htm': ['htm'],
-  }
-  const packages = {
-    preact: 'export * from "preact"',
-    'preact/hooks': 'export * from "preact/hooks"',
-    '@preact/signals': 'export * from "@preact/signals"',
-    htm: 'export * from "htm"',
+    preact: {
+      imports: Object.keys(require('preact')),
+      statement: 'export * from "preact"',
+    },
+    'preact/hooks': {
+      imports: Object.keys(require('preact/hooks')),
+      statement: 'export * from "preact/hooks"',
+    },
+    '@preact/signals': {
+      imports: Object.keys(require('@preact/signals')),
+      statement: 'export * from "@preact/signals"',
+    },
+    'htm': {
+      imports: ['htm'],
+      statement: 'export { default } from "htm"',
+    },
   }
   const ecosystem = {}
-  for (const pkg in packages) {
+  for (const pkg in availableImports) {
     const result = await esbuild.build({
       stdin: {
-        contents: packages[pkg],
+        contents: availableImports[pkg].statement,
         resolveDir: __dirname,
       },
       bundle: true,
@@ -78,7 +84,7 @@ async function makePreactEcosystem() {
     }
     ecosystem[pkg] = {
       code: result.outputFiles[0].text,
-      imports: availableImports[pkg],
+      imports: availableImports[pkg].imports,
       version: await getPackageVersion(pkg)
     }
   }
