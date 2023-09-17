@@ -38,7 +38,7 @@ export async function buildBundle(requestedImports, format) {
     bundle: true,
     minify: true,
     write: false,
-    format: 'iife',
+    format,
   }
   const result = await esbuildBuild(params)
   if (result.errors.length > 0) {
