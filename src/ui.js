@@ -97,10 +97,26 @@ function App({ defaultImports }) {
     <section class="section">
       <h2 class="subtitle">Bundle format</h2>
       <p>
-        <select name="format" onChange=${onFormatChange}>
-          <option value="esm" selected=${format === 'esm'}>ESM</option>
-          <option value="iife" selected=${format === 'iife'}>IIFE</option>
-        </select>
+        <label>
+          <input
+            type="radio"
+            name="format"
+            value="esm"
+            onChange=${onFormatChange}
+            checked=${format === 'esm'}
+          />
+          ESM
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="format"
+            value="iife"
+            onChange=${onFormatChange}
+            checked=${format === 'iife'}
+          />
+          IIFE
+        </label>
       </p>
     </section>
     <section class="section">
@@ -116,7 +132,7 @@ function App({ defaultImports }) {
       </p>
       <h2 class="subtitle">Usage</h2>
       <textarea
-        class="usage"
+        class="code"
         readonly
         disabled=${isLoadingBundle}
       >${(bundle.usage || 'No usage').replaceAll('<br>', '\n')}</textarea>
