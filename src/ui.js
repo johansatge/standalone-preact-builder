@@ -120,10 +120,12 @@ function App({ defaultImports }) {
       </p>
     </section>
     <section class="section">
-      <h2 class="subtitle">Generated bundle</h2>
+      <h2 class="subtitle">
+        Generated bundle
+        ${isLoadingBundle && html`<span class="loader"></span>`}
+      </h2>
       <textarea class="code"
         readonly
-        disabled=${isLoadingBundle}
       >${bundle.code || ''}</textarea>
       <p>
         <button onClick=${onCopyToClipboard}>Copy to clipboard</button>
@@ -134,7 +136,6 @@ function App({ defaultImports }) {
       <textarea
         class="code"
         readonly
-        disabled=${isLoadingBundle}
       >${(bundle.usage || 'No usage').replaceAll('<br>', '\n')}</textarea>
     </section>
   `

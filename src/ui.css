@@ -57,8 +57,42 @@ body {
 }
 
 .subtitle {
+  position: relative;
   font-size: 20px;
   margin: 0 0 12px 0;
+}
+
+.loader {
+  position: absolute;
+  box-sizing: border-box;
+  top: 2px;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #673ab9;
+  border-radius: 50%;
+  animation: loader 800ms linear infinite;
+}
+
+.loader::after {
+  z-index: 2;
+  position: absolute;
+  display: block;
+  content: ' ';
+  top: -4px;
+  left: 4px;
+  width: 6px;
+  height: 6px;
+  background: #f2f2f2;
+}
+
+@keyframes loader {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .version {
@@ -165,10 +199,6 @@ input[type="radio"]:checked::after {
 .code:focus {
   outline: 0;
   border: 2px solid #673ab9;
-}
-
-.code:disabled {
-  opacity: 0.3;
 }
 
 .actions {
