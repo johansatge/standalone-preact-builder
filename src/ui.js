@@ -29,16 +29,16 @@ function wasmJsResolver() {
   }
 }
 
-async function buildBundle(imports, format) {
+async function buildBundle(requestedImports, format) {
   let bundleComments = `// Preact Standalone ${getDate()} (${format.toUpperCase()})\n`
   let bundleExports = []
   let bundleSource = ''
-  for (const pkg in imports) {
+  for (const pkg in requestedImports) {
     const pkgVersion = window.preactEcosystem[pkg].version
-    bundleComments += `// ${pkg}@${pkgVersion}:${imports[pkg].join(',')}\n`
-    const importedModules = imports[pkg].includes(pkg) ? pkg : `{ ${imports[pkg].join(', ')} }`
-    bundleSource += `import ${importedModules} from '${pkg}';\n`
-    bundleExports = [...bundleExports, ...imports[pkg]]
+    bundleComments += `// ${pkg}@${pkgVersion}:${requestedImports[pkg].join(',')}\n`
+    const imports = requestedImports[pkg].includes(pkg) ? pkg : `{ ${requestedImports[pkg].join(', ')} }`
+    bundleSource += `import ${imports} from '${pkg}';\n`
+    bundleExports = [...bundleExports, ...requestedImports[pkg]]
   }
   let usage = ''
   if (format === 'esm') {
@@ -122,12 +122,12 @@ function App({ defaultImports }) {
   const onImportChange = (evt) => {
     const newSelectedImports = {...selectedImports}
     const pkg = evt.currentTarget.dataset.pkg
-    const mod = evt.currentTarget.dataset.mod
+    const imp = evt.currentTarget.dataset.imp
     if (evt.currentTarget.checked) {
       if (typeof newSelectedImports[pkg] === 'undefined') {
         newSelectedImports[pkg] = []
       }
-      newSelectedImports[pkg].push(mod)
+      newSelectedImports[pkg].push(imp)
     } else {
       const index = newSelectedImports[pkg].indexOf(newSelectedImports[pkg])
       newSelectedImports[pkg].splice(index, 1)
@@ -159,7 +159,7 @@ function App({ defaultImports }) {
       <div class="column">
         <h2 class="subtitle">${pkg}</h2>
         <${ImportsList}
-          pkg="${pkg}" modules=${window.preactEcosystem[pkg].imports}
+          pkg="${pkg}" imports=${window.preactEcosystem[pkg].imports}
           selectedImports=${selectedImports} onImportChange=${onImportChange}
         />
       </div>
@@ -189,17 +189,17 @@ function App({ defaultImports }) {
   `
 }
 
-function ImportsList({ pkg, modules, selectedImports, onImportChange }) {
-  return modules.map((mod) => html`
-    <label key=${mod}>
+function ImportsList({ pkg, imports, selectedImports, onImportChange }) {
+  return imports.map((imp) => html`
+    <label key=${imp}>
       <input
         type="checkbox" autocomplete="off"
-        data-pkg=${pkg} data-mod=${mod}
-        checked=${selectedImports[pkg] && selectedImports[pkg].includes(mod)}
+        data-pkg=${pkg} data-imp=${imp}
+        checked=${selectedImports[pkg] && selectedImports[pkg].includes(imp)}
         value="1"
         onChange=${onImportChange}
       />
-      ${mod}
+      ${imp}
     </label>
     <br />
   `)
