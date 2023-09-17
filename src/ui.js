@@ -35,7 +35,7 @@ async function buildBundle(requestedImports, format) {
   let bundleSource = ''
   for (const pkg in requestedImports) {
     const pkgVersion = window.preactEcosystem[pkg].version
-    bundleComments += `// ${pkg}@${pkgVersion}:${requestedImports[pkg].join(',')}\n`
+    bundleComments += `// ${pkg}@${pkgVersion} (${requestedImports[pkg].join(', ')})\n`
     const imports = requestedImports[pkg].includes(pkg) ? pkg : `{ ${requestedImports[pkg].join(', ')} }`
     bundleSource += `import ${imports} from '${pkg}';\n`
     bundleExports = [...bundleExports, ...requestedImports[pkg]]

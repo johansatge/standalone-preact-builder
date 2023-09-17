@@ -24,8 +24,9 @@ async function build() {
     let html = await fsp.readFile(path.join(srcPath, 'index.html'), 'utf8')
     const preactEcosystem = await makePreactEcosystem()
     html = html.replace('__preactEcosystem__', JSON.stringify(preactEcosystem))
-    const uiScript = await makeUiScript()
+    const { uiScript, uiStyles } = await makeUi()
     html = html.replace('__uiScript__', uiScript)
+    html = html.replace('__uiStyles__', uiStyles)
     await fsp.writeFile(path.join(distPath, 'index.html'), html, 'utf8')
     console.log(`Built (${Date.now() - startMs}ms)`)
   } catch (error) {
@@ -97,16 +98,20 @@ async function getPackageVersion(pkg) {
   return pkgJson.version
 }
 
-async function makeUiScript() {
+async function makeUi() {
   const result = await esbuild.build({
-    entryPoints: [path.join(srcPath, 'ui.js')],
+    entryPoints: [path.join(srcPath, 'ui.js'), path.join(srcPath, 'ui.css')],
     bundle: true,
     minify: true,
     write: false,
+    outdir: distPath,
     format: 'iife',
   })
   if (result.errors.length > 0) {
     throw new Error(`UI script: ${errors.map((error) => error.message).join(', ')}`)
   }
-  return result.outputFiles[0].text
+  return {
+    uiScript: result.outputFiles[0].text,
+    uiStyles: result.outputFiles[1].text,
+  }
 }
