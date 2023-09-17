@@ -1,7 +1,7 @@
-import * as esbuild from 'esbuild-wasm'
+import { build as esbuildBuild, initialize as esbuildInitialize } from 'esbuild-wasm'
 
 // Init esbuild-wasm as soon as possible
-const esbuildInitPromise = esbuild.initialize({
+const esbuildInitPromise = esbuildInitialize({
   wasmURL: 'https://cdn.jsdelivr.net/npm/esbuild-wasm@0.19.3/esbuild.wasm',
 })
 
@@ -40,7 +40,7 @@ export async function buildBundle(requestedImports, format) {
     write: false,
     format: 'iife',
   }
-  const result = await esbuild.build(params)
+  const result = await esbuildBuild(params)
   if (result.errors.length > 0) {
     throw new Error(errors.map((error) => error.message).join(', '))
   }
