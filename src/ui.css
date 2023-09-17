@@ -7,7 +7,7 @@
 }
 
 body {
-  margin: 60px 0 0 0;
+  margin: 62px 0 0 0;
 }
 
 .header {
@@ -155,7 +155,7 @@ input[type="radio"]:checked::after {
   box-sizing: border-box;
   border-radius: 4px;
   border: 2px solid #cccccc;
-  margin: 0 0 8px 0;
+  margin: 0 0 12px 0;
   padding: 6px;
   font-family: Courier;
   line-height: 18px;

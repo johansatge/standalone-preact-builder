@@ -120,7 +120,7 @@ function App({ defaultImports }) {
       </p>
     </section>
     <section class="section">
-      <h2 class="subtitle">Generated file</h2>
+      <h2 class="subtitle">Generated bundle</h2>
       <textarea class="code"
         readonly
         disabled=${isLoadingBundle}
