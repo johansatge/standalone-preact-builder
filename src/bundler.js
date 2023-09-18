@@ -76,7 +76,7 @@ function getBundleSource(requestedImports, format) {
       '<script type="module">',
       `  import { ${bundleExports.join(', ')} } from "standalone-preact.js"`,
       '</script>',
-    ].join('<br>')
+    ].join('\n')
   }
   if (format === 'iife') {
     bundleSource += `window.standalonePreact = { ${bundleExports.join(', ')} };\n`
@@ -85,7 +85,7 @@ function getBundleSource(requestedImports, format) {
       '<script>',
       `  const { ${bundleExports.join(', ')} } = window.standalonePreact`,
       '</script>',
-    ].join('<br>')
+    ].join('\n')
   }
   return { bundleSource, bundleComments, usage }
 }

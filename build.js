@@ -24,9 +24,12 @@ async function build() {
     let html = await fsp.readFile(path.join(srcPath, 'index.html'), 'utf8')
     const preactEcosystem = await makePreactEcosystem()
     html = html.replace('__preactEcosystem__', JSON.stringify(preactEcosystem))
-    const { uiScript, uiStyles } = await makeUi()
-    html = html.replace('__uiScript__', uiScript)
+    const { uiScript, uiStyles, prismStyles } = await makeUi()
+    // Replace JS with a function to avoid automatic JS pattern replacement, like $&
+    // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#specifying_a_string_as_the_replacement
+    html = html.replace('__uiScript__', () => uiScript)
     html = html.replace('__uiStyles__', uiStyles)
+    html = html.replace('__prismStyles__', prismStyles)
     await fsp.writeFile(path.join(distPath, 'index.html'), html, 'utf8')
     console.log(`Built (${Date.now() - startMs}ms)`)
   } catch (error) {
@@ -100,7 +103,11 @@ async function getPackageVersion(pkg) {
 
 async function makeUi() {
   const result = await esbuild.build({
-    entryPoints: [path.join(srcPath, 'ui.js'), path.join(srcPath, 'ui.css')],
+    entryPoints: [
+      path.join(srcPath, 'ui.js'),
+      path.join(srcPath, 'ui.css'),
+      path.join(__dirname, 'node_modules/prismjs/themes/prism-funky.css')
+    ],
     bundle: true,
     minify: true,
     write: false,
@@ -113,5 +120,6 @@ async function makeUi() {
   return {
     uiScript: result.outputFiles[0].text,
     uiStyles: result.outputFiles[1].text,
+    prismStyles: result.outputFiles[2].text,
   }
 }

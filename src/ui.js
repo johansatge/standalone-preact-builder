@@ -1,10 +1,14 @@
 import { h, render } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import htm from 'htm'
+import Prism from 'prismjs'
+
 import { buildBundle } from './bundler.js'
 
 const defaultImports = {
   preact: ['h', 'render'],
+  'preact/hooks': ['useEffect', 'useState'],
+  '@preact/signals': ['signal'],
   htm: ['htm'],
 }
 
@@ -71,6 +75,9 @@ function App({ defaultImports }) {
       })
   }, [selectedImports, format])
 
+  const highlightedBundleCode = Prism.highlight(bundle.code || 'No bundle', Prism.languages.javascript, 'javascript')
+  const highlightedBundleUsage = Prism.highlight(bundle.usage || 'No usage', Prism.languages.html, 'html')
+
   return html`
     <header class="header">
       <h1 class="title">
@@ -95,13 +102,14 @@ function App({ defaultImports }) {
       `)}
     </section>
     <section class="section">
-      <h2 class="subtitle">Bundle format</h2>
+      <h2 class="subtitle">
+        Generated bundle
+        ${isLoadingBundle && html`<span class="loader"></span>`}
+      </h2>
       <p>
         <label>
           <input
-            type="radio"
-            name="format"
-            value="esm"
+            type="radio" name="format" value="esm"
             onChange=${onFormatChange}
             checked=${format === 'esm'}
           />
@@ -109,35 +117,35 @@ function App({ defaultImports }) {
         </label>
         <label>
           <input
-            type="radio"
-            name="format"
-            value="iife"
+            type="radio" name="format" value="iife"
             onChange=${onFormatChange}
             checked=${format === 'iife'}
           />
           IIFE
         </label>
       </p>
-    </section>
-    <section class="section">
-      <h2 class="subtitle">
-        Generated bundle
-        ${isLoadingBundle && html`<span class="loader"></span>`}
-      </h2>
-      <textarea class="code"
-        readonly
-      >${bundle.code || ''}</textarea>
+      <pre class="code-wrapper">
+        <code
+          class="code"
+          dangerouslySetInnerHTML=${{__html: highlightedBundleCode}}
+        ></code>
+      </pre>
       <p>
         <button onClick=${onCopyToClipboard}>Copy to clipboard</button>
         <button onClick=${onDownload}>Download file</button>
         Size: ${bundle.sizeKb || 0}Kb (${bundle.sizeGzippedKb || 0}Kb gzipped)
       </p>
       <h2 class="subtitle">Usage</h2>
-      <textarea
-        class="code"
-        readonly
-      >${(bundle.usage || 'No usage').replaceAll('<br>', '\n')}</textarea>
+      <pre class="code-wrapper">
+        <code
+          class="code"
+          dangerouslySetInnerHTML=${{__html: highlightedBundleUsage}}
+        ></code>
+      </pre>
     </section>
+    <footer class="footer">
+      Made in Antibes with ♥
+    </footer>
   `
 }
 
