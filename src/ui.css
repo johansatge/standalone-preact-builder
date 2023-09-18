@@ -19,12 +19,19 @@ body {
   color: #ffffff;
   background: #673ab9;
   border-bottom: 1px solid #825aca;
-  padding: 10px 20px 10px 20px;
+  padding: 10px 20px 10px 56px;
 }
 
 .title {
   float: left;
   font-size: 24px;
+}
+
+.logo {
+  position: absolute;
+  width: 38px;
+  top: 4px;
+  left: 15px;
 }
 
 .title a {
