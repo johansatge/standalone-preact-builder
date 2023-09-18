@@ -20,6 +20,7 @@ function App({ defaultImports }) {
   const [format, setFormat] = useState('esm')
   const [bundle, setBundle] = useState({})
   const [isLoadingBundle, setLoadingBundle] = useState(false)
+  const [hasCopied, setHasCopied] = useState(false)
 
   const onFormatChange = (evt) => {
     setFormat(evt.currentTarget.value)
@@ -47,6 +48,7 @@ function App({ defaultImports }) {
   const onCopyToClipboard = (evt) => {
     evt.preventDefault()
     navigator.clipboard.writeText(bundle.code)
+    setHasCopied(true)
   }
 
   const onDownload = (evt) => {
@@ -74,6 +76,14 @@ function App({ defaultImports }) {
         setBundle({ code: `Error: ${error.message}` })
       })
   }, [selectedImports, format])
+
+  useEffect(() => {
+    if (hasCopied) {
+      setTimeout(() => {
+        setHasCopied(false)
+      }, 1000)
+    }
+  }, [hasCopied])
 
   const highlightedBundleCode = Prism.highlight(bundle.code || 'No bundle', Prism.languages.javascript, 'javascript')
   const highlightedBundleUsage = Prism.highlight(bundle.usage || 'No usage', Prism.languages.html, 'html')
@@ -131,7 +141,9 @@ function App({ defaultImports }) {
         ></code>
       </pre>
       <p>
-        <button onClick=${onCopyToClipboard}>Copy to clipboard</button>
+        <button class="${hasCopied ? 'copied' : ''}" onClick=${onCopyToClipboard}>
+          Copy to clipboard
+        </button>
         <button onClick=${onDownload}>Download file</button>
         Size: ${bundle.sizeKb || 0}Kb (${bundle.sizeGzippedKb || 0}Kb gzipped)
       </p>
