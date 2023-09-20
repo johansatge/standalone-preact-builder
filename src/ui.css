@@ -19,9 +19,19 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+@media screen and (max-width: 850px) {
+  * {
+    font-size: 12px;
+  }
+}
 
 body {
   margin: 72px 0 0 0;
+}
+@media screen and (max-width: 850px) {
+  body {
+    margin: 60px 0 0 0;
+  }
 }
 
 .header {
@@ -33,11 +43,27 @@ body {
   background: var(--color-highlight);
   padding: 10px 20px 10px 56px;
 }
+@media screen and (max-width: 850px) {
+  .header {
+    padding: 10px 10px 10px 46px;
+  }
+}
 
 .title {
   color: var(--color-header-text);
   float: left;
   font-size: 24px;
+}
+@media screen and (max-width: 850px) {
+  .title {
+    font-size: 20px;
+  }
+}
+@media screen and (max-width: 480px) {
+  .title {
+    font-size: 16px;
+    line-height: 24px;
+  }
 }
 
 .logo {
@@ -45,6 +71,12 @@ body {
   width: 38px;
   top: 4px;
   left: 15px;
+}
+@media screen and (max-width: 850px) {
+  .logo {
+    width: 34px;
+    left: 5px;
+  }
 }
 
 .title a {
@@ -63,6 +95,16 @@ body {
   border-radius: 4px;
   text-decoration: none;
 }
+@media screen and (max-width: 850px) {
+  .help {
+    padding: 4px 10px 4px 10px;
+  }
+}
+@media screen and (max-width: 480px) {
+  .help-full {
+    display: none;
+  }
+}
 
 .section {
   background: var(--color-section-bg);
@@ -70,6 +112,12 @@ body {
   padding: 15px 20px 5px 20px;
   border-top: 1px solid var(--color-section-border);
   border-bottom: 1px solid var(--color-section-border);
+}
+@media screen and (max-width: 850px) {
+  .section {
+    padding: 10px 15px 5px 15px;
+    margin: 0 0 15px 0;
+  }
 }
 
 .section::after {
@@ -83,37 +131,10 @@ body {
   font-size: 22px;
   margin: 0 0 14px 0;
 }
-
-.loader {
-  position: absolute;
-  box-sizing: border-box;
-  top: 2px;
-  right: 0;
-  width: 20px;
-  height: 20px;
-  border: 3px solid var(--color-highlight);
-  border-radius: 50%;
-  animation: loader 800ms linear infinite;
-}
-
-.loader::after {
-  z-index: 2;
-  position: absolute;
-  display: block;
-  content: ' ';
-  top: -4px;
-  left: 4px;
-  width: 6px;
-  height: 6px;
-  background: var(--color-section-bg);
-}
-
-@keyframes loader {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+@media screen and (max-width: 850px) {
+  .subtitle {
+    font-size: 18px;
+    margin: 0 0 10px 0;
   }
 }
 
@@ -122,14 +143,27 @@ body {
   margin: 0 0 0 5px;
 }
 
+.columns {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+@media screen and (max-width: 850px) {
+  .columns {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media screen and (max-width: 480px) {
+  .columns {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
 .column {
-  box-sizing: border-box;
-  float: left; width: 25%;
   margin: 0 0 10px 0;
 }
 
 .input-label {
-  cursor: pointer; font-family: Courier;
+  cursor: pointer; font-family: Courier, monospace;
   display: inline-block;
   margin: 0 10px 5px 0;
 }
@@ -205,6 +239,39 @@ input[type="radio"]:checked::after {
   border-radius: 50%;
 }
 
+.loader {
+  position: absolute;
+  box-sizing: border-box;
+  top: 2px;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--color-highlight);
+  border-radius: 50%;
+  animation: loader 800ms linear infinite;
+}
+
+.loader::after {
+  z-index: 2;
+  position: absolute;
+  display: block;
+  content: ' ';
+  top: -4px;
+  left: 4px;
+  width: 6px;
+  height: 6px;
+  background: var(--color-section-bg);
+}
+
+@keyframes loader {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .code-wrapper {
   width: 100%;
   box-sizing: border-box;
@@ -217,7 +284,7 @@ input[type="radio"]:checked::after {
 }
 
 .code, .code * {
-  font-family: Courier;
+  font-family: Courier, monospace;
   line-height: 18px;
   color: var(--color-code-text);
 }
@@ -234,6 +301,11 @@ input[type="radio"]:checked::after {
   border: 0;
   margin: 0 12px 8px 0;
 }
+@media screen and (max-width: 850px) {
+  .action {
+    padding: 4px 10px 4px 10px;
+  }
+}
 
 .copied::after {
   position: absolute;
@@ -244,6 +316,12 @@ input[type="radio"]:checked::after {
   content: 'Copied!';
   background: inherit;
   z-index: 2;
+}
+
+@media screen and (max-width: 480px) {
+  .size {
+    display: block;
+  }
 }
 
 .footer {

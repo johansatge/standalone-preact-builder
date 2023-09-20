@@ -95,10 +95,10 @@ function App({ defaultImports }) {
         Standalone <a href="https://preactjs.com/">Preact</a> Builder
       </h1>
       <a class="help" href="https://github.com/johansatge/standalone-preact">
-        Help on GitHub
+        Help <span class="help-full">on GitHub</span>
       </a>
     </header>
-    <section class="section">
+    <section class="section columns">
       ${Object.keys(window.preactEcosystem).map((pkg) => html`
         <div class="column">
           <h2 class="subtitle">
@@ -146,7 +146,9 @@ function App({ defaultImports }) {
           Copy to clipboard
         </button>
         <button class="action" onClick=${onDownload}>Download file</button>
-        Size: ${bundle.sizeKb || 0}Kb (${bundle.sizeGzippedKb || 0}Kb gzipped)
+        <span class="size">
+          Size: ${bundle.sizeKb || 0}Kb (${bundle.sizeGzippedKb || 0}Kb gzipped)
+        </span>
       </p>
       <h2 class="subtitle">Usage</h2>
       <pre class="code-wrapper">
