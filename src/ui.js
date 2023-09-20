@@ -117,8 +117,8 @@ function App({ defaultImports }) {
         Generated bundle
         ${isLoadingBundle && html`<span class="loader"></span>`}
       </h2>
-      <p>
-        <label>
+      <p class="paragraph">
+        <label class="input-label">
           <input
             type="radio" name="format" value="esm"
             onChange=${onFormatChange}
@@ -126,7 +126,7 @@ function App({ defaultImports }) {
           />
           ESM
         </label>
-        <label>
+        <label class="input-label">
           <input
             type="radio" name="format" value="iife"
             onChange=${onFormatChange}
@@ -141,11 +141,11 @@ function App({ defaultImports }) {
           dangerouslySetInnerHTML=${{__html: highlightedBundleCode}}
         ></code>
       </pre>
-      <p>
-        <button class="${hasCopied ? 'copied' : ''}" onClick=${onCopyToClipboard}>
+      <p class="paragraph">
+        <button class="action ${hasCopied ? 'copied' : ''}" onClick=${onCopyToClipboard}>
           Copy to clipboard
         </button>
-        <button onClick=${onDownload}>Download file</button>
+        <button class="action" onClick=${onDownload}>Download file</button>
         Size: ${bundle.sizeKb || 0}Kb (${bundle.sizeGzippedKb || 0}Kb gzipped)
       </p>
       <h2 class="subtitle">Usage</h2>
@@ -164,7 +164,7 @@ function App({ defaultImports }) {
 
 function ImportsList({ pkg, imports, selectedImports, onImportChange }) {
   return imports.map((imp) => html`
-    <label key=${imp}>
+    <label class="input-label" key=${imp}>
       <input
         type="checkbox" autocomplete="off"
         data-pkg=${pkg} data-imp=${imp}

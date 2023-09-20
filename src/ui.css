@@ -1,4 +1,18 @@
+:root {
+  --color-text: #141414;
+  --color-header-text: #ffffff;
+  --color-highlight: #673ab9;
+  --color-section-bg: #f2f2f2;
+  --color-section-border: #e7e7e7;
+  --color-code-bg: #0f1725;
+  --color-code-text: #dddddd;
+  --color-input-checked: #ffffff;
+  --color-input-border: #cccccc;
+  --color-footer: #cccccc;
+}
+
 * {
+  color: var(--color-text);
   margin: 0; padding: 0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
@@ -16,13 +30,12 @@ body {
   box-sizing: border-box;
   top: 0;
   width: 100%;
-  color: #ffffff;
-  background: #673ab9;
-  border-bottom: 1px solid #825aca;
+  background: var(--color-highlight);
   padding: 10px 20px 10px 56px;
 }
 
 .title {
+  color: var(--color-header-text);
   float: left;
   font-size: 24px;
 }
@@ -38,13 +51,13 @@ body {
   font-size: inherit;
   color: inherit;
   text-decoration: none;
-  border-bottom: 2px dotted #ffffff;
+  border-bottom: 2px dotted var(--color-header-text);
 }
 
 .help {
   float: right;
-  color: #673ab9;
-  background: #ffffff;
+  color: var(--color-highlight);
+  background: var(--color-header-text);
   margin: 2px 0 0 0;
   padding: 6px 12px 6px 12px;
   border-radius: 4px;
@@ -52,11 +65,11 @@ body {
 }
 
 .section {
-  background: #f2f2f2;
+  background: var(--color-section-bg);
   margin: 0 0 20px 0;
   padding: 15px 20px 5px 20px;
-  border-top: 1px solid #e7e7e7;
-  border-bottom: 1px solid #e7e7e7;
+  border-top: 1px solid var(--color-section-border);
+  border-bottom: 1px solid var(--color-section-border);
 }
 
 .section::after {
@@ -78,7 +91,7 @@ body {
   right: 0;
   width: 20px;
   height: 20px;
-  border: 3px solid #673ab9;
+  border: 3px solid var(--color-highlight);
   border-radius: 50%;
   animation: loader 800ms linear infinite;
 }
@@ -92,7 +105,7 @@ body {
   left: 4px;
   width: 6px;
   height: 6px;
-  background: #f2f2f2;
+  background: var(--color-section-bg);
 }
 
 @keyframes loader {
@@ -115,13 +128,13 @@ body {
   margin: 0 0 10px 0;
 }
 
-label {
+.input-label {
   cursor: pointer; font-family: Courier;
   display: inline-block;
   margin: 0 10px 5px 0;
 }
 
-p {
+.paragraph {
   margin: 0 0 10px 0;
 }
 
@@ -129,7 +142,7 @@ input[type="checkbox"] {
   appearance: none;
   cursor: pointer;
   margin: -2px 5px 2px 0;
-  border: 2px solid #cccccc;
+  border: 2px solid var(--color-input-border);
   border-radius: 4px;
   width: 18px;
   height: 18px;
@@ -138,8 +151,8 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-  border-color: #673ab9;
-  background: #673ab9;
+  border-color: var(--color-highlight);
+  background: var(--color-highlight);
 }
 
 input[type="checkbox"]:checked::before,
@@ -147,7 +160,7 @@ input[type="checkbox"]:checked::after {
   position: absolute;
   content: ' ';
   height: 2px;
-  background: #ffffff;
+  background: var(--color-input-checked);
 }
 
 input[type="checkbox"]:checked::before {
@@ -168,7 +181,7 @@ input[type="radio"] {
   appearance: none;
   cursor: pointer;
   margin: -2px 5px 0 0;
-  border: 2px solid #cccccc;
+  border: 2px solid var(--color-input-border);
   border-radius: 50%;
   width: 18px;
   height: 18px;
@@ -177,8 +190,8 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked {
-  border-color: #673ab9;
-  background: #673ab9;
+  border-color: var(--color-highlight);
+  background: var(--color-highlight);
 }
 
 input[type="radio"]:checked::after {
@@ -188,7 +201,7 @@ input[type="radio"]:checked::after {
   left: 4px;
   width: 6px;
   height: 6px;
-  background: #ffffff;
+  background: var(--color-input-checked);
   border-radius: 50%;
 }
 
@@ -197,29 +210,24 @@ input[type="radio"]:checked::after {
   box-sizing: border-box;
   border-radius: 4px;
   overflow-y: auto;
-  border: 2px solid #0f1725;
+  border: 2px solid var(--color-code-bg);
   margin: 0 0 12px 0;
   padding: 6px;
-  background: #0f1725;
+  background: var(--color-code-bg);
 }
 
 .code, .code * {
   font-family: Courier;
   line-height: 18px;
-  color: #dddddd;
+  color: var(--color-code-text);
 }
 
-.actions {
-  color: #999999;
-  margin: 0 0 20px 0;
-}
-
-button {
+.action {
   position: relative;
   z-index: 1;
   cursor: pointer;
   color: #ffffff;
-  background: #673ab9;
+  background: var(--color-highlight);
   padding: 6px 12px 6px 12px;
   border-radius: 4px;
   text-decoration: none;
@@ -240,6 +248,6 @@ button {
 
 .footer {
   text-align: center;
-  color: #cccccc;
+  color: var(--color-footer);
   margin: 10px 20px 20px 20px;
 }
