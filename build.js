@@ -68,9 +68,15 @@ async function makePreactEcosystem() {
     },
     jsModules: {}
   }
-  // Read raw ESM module from each package and expose it to the frontend,
-  // to be injected in the runtime when esbuild-wasm requires them.
+  // Read raw ESM module from each package to be injected in the frontend
+  // and read in esbuild-wasm through a custom resolver.
+  //
   // The list includes "@preact/signals-core" because it is imported in "@preact/signals"
+  //
+  // Previous implementation was exposing each module through wildcard exports at build time,
+  // like "export * from 'preact'", but this was preventing esbuild-wasm from tree shaking each module
+  // when importing back each property in the final JS
+  // (See https://github.com/evanw/esbuild/issues/1420)
   const neededJsModules = ['preact', 'preact/hooks', '@preact/signals', '@preact/signals-core', 'htm']
   for (const mod of neededJsModules) {
     ecosystem.jsModules[mod] = await getJsModuleFromNodeModule(mod)
