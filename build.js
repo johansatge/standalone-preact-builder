@@ -53,44 +53,27 @@ async function makeDist() {
 }
 
 async function makePreactEcosystem() {
-  const availableImports = {
-    preact: {
-      imports: Object.keys(require('preact')),
-      statement: 'export * from "preact"',
+  const ecosystem = {
+    imports: {
+      'preact': Object.keys(require('preact')),
+      'preact/hooks': Object.keys(require('preact/hooks')),
+      '@preact/signals': Object.keys(require('@preact/signals')),
+      'htm': ['htm'],
     },
-    'preact/hooks': {
-      imports: Object.keys(require('preact/hooks')),
-      statement: 'export * from "preact/hooks"',
+    versions: {
+      'preact': await getPackageVersion('preact'),
+      'preact/hooks': await getPackageVersion('preact/hooks'),
+      '@preact/signals': await getPackageVersion('@preact/signals'),
+      'htm': await getPackageVersion('htm'),
     },
-    '@preact/signals': {
-      imports: Object.keys(require('@preact/signals')),
-      statement: 'export * from "@preact/signals"',
-    },
-    'htm': {
-      imports: ['htm'],
-      statement: 'export { default } from "htm"',
-    },
+    jsModules: {}
   }
-  const ecosystem = {}
-  for (const pkg in availableImports) {
-    const result = await esbuild.build({
-      stdin: {
-        contents: availableImports[pkg].statement,
-        resolveDir: __dirname,
-      },
-      bundle: true,
-      minify: true,
-      write: false,
-      format: 'esm',
-    })
-    if (result.errors.length > 0) {
-      throw new Error(`Preact ecosystem: ${errors.map((error) => error.message).join(', ')}`)
-    }
-    ecosystem[pkg] = {
-      code: result.outputFiles[0].text,
-      imports: availableImports[pkg].imports,
-      version: await getPackageVersion(pkg)
-    }
+  // Read raw ESM module from each package and expose it to the frontend,
+  // to be injected in the runtime when esbuild-wasm requires them.
+  // The list includes "@preact/signals-core" because it is imported in "@preact/signals"
+  const neededJsModules = ['preact', 'preact/hooks', '@preact/signals', '@preact/signals-core', 'htm']
+  for (const mod of neededJsModules) {
+    ecosystem.jsModules[mod] = await getJsModuleFromNodeModule(mod)
   }
   return ecosystem
 }
@@ -99,6 +82,12 @@ async function getPackageVersion(pkg) {
   const pkgJsonPath = path.join(__dirname, 'node_modules', pkg, 'package.json')
   const pkgJson = JSON.parse(await fsp.readFile(pkgJsonPath, 'utf8'))
   return pkgJson.version
+}
+
+async function getJsModuleFromNodeModule(pkg) {
+  const nodeModulePath = path.join(__dirname, 'node_modules', pkg)
+  const pkgJson = JSON.parse(await fsp.readFile(path.join(nodeModulePath, 'package.json'), 'utf8'))
+  return await fsp.readFile(path.join(nodeModulePath, pkgJson.module), 'utf8')
 }
 
 async function makeUi() {

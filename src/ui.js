@@ -99,14 +99,14 @@ function App({ defaultImports }) {
       </a>
     </header>
     <section class="section columns">
-      ${Object.keys(window.preactEcosystem).map((pkg) => html`
+      ${Object.keys(window.preactEcosystem.imports).map((pkg) => html`
         <div class="column">
           <h2 class="subtitle">
             ${pkg}
-            <span class="version">${window.preactEcosystem[pkg].version}</span>
+            <span class="version">${window.preactEcosystem.versions[pkg]}</span>
           </h2>
           <${ImportsList}
-            pkg="${pkg}" imports=${window.preactEcosystem[pkg].imports}
+            pkg="${pkg}" imports=${window.preactEcosystem.imports[pkg]}
             selectedImports=${selectedImports} onImportChange=${onImportChange}
           />
         </div>

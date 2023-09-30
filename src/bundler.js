@@ -6,7 +6,7 @@ const esbuildInitPromise = esbuildInitialize({
 })
 
 // Custom esbuild resolver to map imports (import { x } from "y")
-// to the corresponding code in window.preactEcosystem, since esbuild-wasm
+// to the corresponding code in window.preactEcosystem.jsModules, since esbuild-wasm
 // has no access to physical files in the browser
 function wasmJsResolver() {
   return {
@@ -18,7 +18,7 @@ function wasmJsResolver() {
         }
       })
       build.onLoad({ filter: /.*/ }, (args) => {
-        const contents = window.preactEcosystem[args.path].code
+        const contents = window.preactEcosystem.jsModules[args.path]
         return { contents, loader: 'js' }
       })
     }
@@ -55,15 +55,14 @@ export async function buildBundle(requestedImports, format) {
   }
 }
 
-// Get the bundle source (a list of imports) that is feeded to esbuild to
-// generate the final bundle
+// Get the bundle source (a list of imports) that is feeded to esbuild to generate the final bundle
 // This also returns the final bundle comments and usage example
 function getBundleSource(requestedImports, format) {
   let bundleComments = `// Standalone Preact ${getDate()} (${format.toUpperCase()})\n`
   let bundleExports = []
   let bundleSource = ''
   for (const pkg in requestedImports) {
-    const pkgVersion = window.preactEcosystem[pkg].version
+    const pkgVersion = window.preactEcosystem.versions[pkg]
     bundleComments += `// ${pkg}@${pkgVersion} (${requestedImports[pkg].join(', ')})\n`
     const imports = requestedImports[pkg].includes(pkg) ? pkg : `{ ${requestedImports[pkg].join(', ')} }`
     bundleSource += `import ${imports} from '${pkg}';\n`
@@ -75,6 +74,7 @@ function getBundleSource(requestedImports, format) {
     usage = [
       '<script type="module">',
       `  import { ${bundleExports.join(', ')} } from "standalone-preact.js"`,
+      ...(requestedImports.htm ? getAppUsage() : []),
       '</script>',
     ].join('\n')
   }
@@ -84,10 +84,23 @@ function getBundleSource(requestedImports, format) {
       '<script src="standalone-preact.js"></script>',
       '<script>',
       `  const { ${bundleExports.join(', ')} } = window.standalonePreact`,
+      ...(requestedImports.htm ? getAppUsage() : []),
       '</script>',
     ].join('\n')
   }
   return { bundleSource, bundleComments, usage }
+}
+
+function getAppUsage() {
+  return [
+    '  const html = htm.bind(h)',
+    '  function App (props) {',
+    '    return html`',
+    '      <h1>Hello ${props.name}!</h1>',
+    '    `',
+    '  }',
+    '  render(html`<${App} name="World" />`, document.body)',
+  ]
 }
 
 async function getGzippedSize(string) {
