@@ -50,8 +50,8 @@ export async function buildBundle(requestedImports, format) {
   return {
     code,
     usage,
-    sizeKb: Math.round(size / 1024 * 100) / 100,
-    sizeGzippedKb: Math.round(sizeGzipped / 1024 * 100) / 100
+    sizeKb: Math.round(size / 1024 * 10) / 10,
+    sizeGzippedKb: Math.round(sizeGzipped / 1024 * 10) / 10
   }
 }
 

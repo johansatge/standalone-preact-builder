@@ -1,5 +1,6 @@
 :root {
   --color-text: #141414;
+  --color-help: #666666;
   --color-header-text: 255, 255, 255;
   --color-highlight: #673ab9;
   --color-section-bg: #f2f2f2;
@@ -13,7 +14,8 @@
   font-size: 62.5%; /* (62.5/100) * 16px = 10px */
   --font-size-default: 1.4rem;
   --font-size-title: 2.4rem;
-  --font-size-subtitle: 2.2rem;
+  --font-size-section-title: 2.2rem;
+  --font-size-column-title: 1.8rem;
   --font-size-small: 1.1rem;
 }
 
@@ -83,7 +85,7 @@ body {
   border-color: rgba(var(--color-header-text), 1);
 }
 
-.help {
+.github {
   position: absolute;
   right: 15px;
   bottom: 10px;
@@ -103,15 +105,8 @@ body {
   border-bottom: 1px solid var(--color-section-border);
 }
 
-.section::after {
-  display: block;
-  content: ' ';
-  clear: both;
-}
-
-.subtitle {
-  position: relative;
-  font-size: var(--font-size-subtitle);
+.section-title {
+  font-size: var(--font-size-section-title);
   margin: 0 0 14px 0;
 }
 
@@ -137,6 +132,11 @@ body {
 
 .column {
   margin: 0 0 10px 0;
+}
+
+.column-title {
+  font-size: var(--font-size-column-title);
+  margin: 0 0 14px 0;
 }
 
 .input-label {

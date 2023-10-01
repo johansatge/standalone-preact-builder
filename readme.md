@@ -25,8 +25,8 @@ This project exists as an answer to those problems.
 
 ## Usage
 
-- Navigate to [standalonepreact.satge.net](https://standalonepreact.satge.net)
-- Check/uncheck the imports you need from Preact and its most used dependencies
+- Open [standalonepreact.satge.net](https://standalonepreact.satge.net)
+- Check/uncheck the imports you need from Preact and its most popular dependencies
 - Choose the desired output format
   - `ESM` will allow you to import the script from a `<script type="module">`
   - `IIFE` will expose a `window.standalonePreact` object in the browser context, containing the requested imports
