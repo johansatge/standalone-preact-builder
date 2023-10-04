@@ -13,6 +13,7 @@
 
   font-size: 62.5%; /* (62.5/100) * 16px = 10px */
   --font-size-default: 1.4rem;
+  --font-size-help: 1.8rem;
   --font-size-title: 2.4rem;
   --font-size-section-title: 2.2rem;
   --font-size-column-title: 1.8rem;
@@ -29,9 +30,9 @@
 }
 
 body {
-  margin: 72px 0 0 0;
+  margin: 65px 0 0 0;
 }
-@media screen and (max-width: 530px) {
+@media screen and (max-width: 470px) {
   body {
     margin: 0;
   }
@@ -44,10 +45,10 @@ body {
   top: 0;
   width: 100%;
   background: var(--color-highlight);
-  padding: 10px 20px 10px 56px;
-  margin: 0 0 21px 0;
+  padding: 10px 0 10px 56px;
+  margin: 0 0 15px 0;
 }
-@media screen and (max-width: 530px) {
+@media screen and (max-width: 470px) {
   .header {
     position: relative;
   }
@@ -56,7 +57,7 @@ body {
 .header br {
   display: none;
 }
-@media screen and (max-width: 530px) {
+@media screen and (max-width: 470px) {
   .header br {
     display: block;
   }
@@ -85,13 +86,18 @@ body {
   border-color: rgba(var(--color-header-text), 1);
 }
 
+.help {
+  margin: 0 15px 20px 15px;
+  font-weight: bold;
+  color: var(--color-help);
+  font-size: var(--font-size-help);
+}
+
 .github {
-  position: absolute;
-  right: 15px;
-  bottom: 10px;
-  color: var(--color-highlight);
-  background: rgb(var(--color-header-text));
-  margin: 2px 0 0 0;
+  display: inline-block;
+  color: rgb(var(--color-header-text));
+  background: var(--color-highlight);
+  margin: 8px 0 0 0;
   padding: 6px 12px 6px 12px;
   border-radius: 4px;
   text-decoration: none;
@@ -124,7 +130,7 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-@media screen and (max-width: 530px) {
+@media screen and (max-width: 470px) {
   .columns {
     grid-template-columns: repeat(1, 1fr);
   }
@@ -290,7 +296,7 @@ input[type="radio"]:checked::after {
   z-index: 2;
 }
 
-@media screen and (max-width: 530px) {
+@media screen and (max-width: 470px) {
   .size {
     display: block;
   }

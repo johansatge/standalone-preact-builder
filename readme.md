@@ -14,7 +14,7 @@
 
 _Standalone Preact Builder_ generates a standalone JavaScript file that contains [Preact](https://preactjs.com) and its most popular dependencies, to be self-hosted along with the rest of a JS app.
 
-It runs in the browser; no installation is needed.
+The generator runs in the browser; no installation is needed.
 
 ## Usage
 
@@ -24,7 +24,7 @@ It runs in the browser; no installation is needed.
   - `ESM` will allow the script to be imported from a `<script type="module">`
   - `IIFE` will expose a `window.standalonePreact` object in the browser context, containing the requested imports
 - Download the generated script or copy it to the clipboard
-- Self-host it: commit it in the app's Git project, deploy it with the other assets...
+- Self-host it: it's small enough to be committed in the app's Git project, and deployed with the rest of the app
 
 ## What is the point?
 
