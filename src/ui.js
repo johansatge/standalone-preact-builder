@@ -58,7 +58,7 @@ function App({ defaultImports }) {
     })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
-    link.download = 'standalone-preact.js'
+    link.download = bundle.filename
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -150,10 +150,10 @@ function App({ defaultImports }) {
         ></code>
       </pre>
       <p class="paragraph">
-        <button class="action ${hasCopied ? 'copied' : ''}" onClick=${onCopyToClipboard}>
+        <button class="action ${hasCopied ? 'copied' : ''}" onClick=${onCopyToClipboard} disabled=${!bundle.filename}>
           Copy to clipboard
         </button>
-        <button class="action" onClick=${onDownload}>Download file</button>
+        <button class="action" onClick=${onDownload} disabled=${!bundle.filename}>Download file</button>
         <span class="size">
           Size: ${bundle.sizeKb || 0}Kb (${bundle.sizeGzippedKb || 0}Kb gzipped)
         </span>

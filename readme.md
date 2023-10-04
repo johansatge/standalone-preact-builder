@@ -46,6 +46,7 @@ This project uses [semver](http://semver.org/).
 
 | Version | Date | Notes |
 | --- | --- | --- |
+| `1.1.0` | 2023-10-04 | Add md5 substring in code & downloaded file to simplify self-hosting |
 | `1.0.0` | 2023-10-01 | Initial version |
 
 ## License

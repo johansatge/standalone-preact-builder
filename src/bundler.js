@@ -1,4 +1,5 @@
 import { build as esbuildBuild, initialize as esbuildInitialize } from 'esbuild-wasm'
+import md5 from 'crypto-js/md5'
 
 // Init esbuild-wasm as soon as possible
 const esbuildInitPromise = esbuildInitialize({
@@ -44,21 +45,28 @@ export async function buildBundle(requestedImports, format) {
   if (result.errors.length > 0) {
     throw new Error(errors.map((error) => error.message).join(', '))
   }
-  const code = bundleComments + result.outputFiles[0].text
-  const size = (new TextEncoder().encode(code)).length
-  const sizeGzipped = await getGzippedSize(code)
+  const builtCode = result.outputFiles[0].text
+  const hash = md5(builtCode).toString().substring(0, 7)
+  const finalCode = [
+    `// Standalone Preact ${getDate()} ${hash} (${format.toUpperCase()})\n`,
+    bundleComments,
+    builtCode,
+  ].join('')
+  const size = (new TextEncoder().encode(finalCode)).length
+  const sizeGzipped = await getGzippedSize(finalCode)
   return {
-    code,
+    code: finalCode,
     usage,
     sizeKb: Math.round(size / 1024 * 10) / 10,
-    sizeGzippedKb: Math.round(sizeGzipped / 1024 * 10) / 10
+    sizeGzippedKb: Math.round(sizeGzipped / 1024 * 10) / 10,
+    filename: `standalone-preact.${hash}.js`,
   }
 }
 
 // Get the bundle source (a list of imports) that is feeded to esbuild to generate the final bundle
 // This also returns the final bundle comments and usage example
 function getBundleSource(requestedImports, format) {
-  let bundleComments = `// Standalone Preact ${getDate()} (${format.toUpperCase()})\n`
+  let bundleComments = ''
   let bundleExports = []
   let bundleSource = ''
   for (const pkg in requestedImports) {
