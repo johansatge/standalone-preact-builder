@@ -56,7 +56,7 @@ export async function buildBundle(requestedImports, format) {
   const sizeGzipped = await getGzippedSize(finalCode)
   return {
     code: finalCode,
-    usage,
+    usage: usage.replaceAll('__hash__', hash),
     sizeKb: Math.round(size / 1024 * 10) / 10,
     sizeGzippedKb: Math.round(sizeGzipped / 1024 * 10) / 10,
     filename: `standalone-preact.${hash}.js`,
@@ -81,7 +81,7 @@ function getBundleSource(requestedImports, format) {
     bundleSource += `export { ${bundleExports.join(', ')} };\n`
     usage = [
       '<script type="module">',
-      `  import { ${bundleExports.join(', ')} } from "standalone-preact.js"`,
+      `  import { ${bundleExports.join(', ')} } from "standalone-preact.__hash__.js"`,
       ...(requestedImports.htm ? getAppUsage() : []),
       '</script>',
     ].join('\n')
@@ -89,7 +89,7 @@ function getBundleSource(requestedImports, format) {
   if (format === 'iife') {
     bundleSource += `window.standalonePreact = { ${bundleExports.join(', ')} };\n`
     usage = [
-      '<script src="standalone-preact.js"></script>',
+      '<script src="standalone-preact.__hash__.js"></script>',
       '<script>',
       `  const { ${bundleExports.join(', ')} } = window.standalonePreact`,
       ...(requestedImports.htm ? getAppUsage() : []),
