@@ -45,6 +45,14 @@ function App({ defaultImports }) {
     setSelectedImports(newSelectedImports)
   }
 
+  const onCheckAllImports = () => {
+    setSelectedImports({ ...window.preactEcosystem.imports })
+  }
+
+  const onCheckNoImports = () => {
+    setSelectedImports({})
+  }
+
   const onCopyToClipboard = (evt) => {
     evt.preventDefault()
     navigator.clipboard.writeText(bundle.code)
@@ -105,9 +113,11 @@ function App({ defaultImports }) {
     </section>
     <section class="section">
       <h2 class="section-title">Select imports to include</h2>
+      <button class="check-button" onClick=${onCheckAllImports}>Chek all</button>
+      <button class="check-button" onClick=${onCheckNoImports}>Chek none</button>
       <div class="columns">
         ${Object.keys(window.preactEcosystem.imports).map((pkg) => html`
-          <div class="column">
+          <div class="column" key=${pkg}>
             <h3 class="column-title">
               ${pkg}
               <span class="version">${window.preactEcosystem.versions[pkg]}</span>
@@ -176,11 +186,11 @@ function App({ defaultImports }) {
 
 function ImportsList({ pkg, imports, selectedImports, onImportChange }) {
   return imports.map((imp) => html`
-    <label class="input-label" key=${imp}>
+    <label class="input-label" key=${pkg + imp}>
       <input
         type="checkbox" autocomplete="off"
         data-pkg=${pkg} data-imp=${imp}
-        checked=${selectedImports[pkg] && selectedImports[pkg].includes(imp)}
+        checked=${typeof selectedImports[pkg] === 'object' && selectedImports[pkg].includes(imp)}
         value="1"
         onChange=${onImportChange}
       />

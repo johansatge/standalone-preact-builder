@@ -121,6 +121,20 @@ body {
   margin: 0 0 0 5px;
 }
 
+.check-button {
+  cursor: pointer;
+  appearance: none;
+  border: 0;
+  font-weight: bold;
+  font-size: var(--font-size-small);
+  display: inline-block;
+  color: rgb(var(--color-header-text));
+  background: var(--color-highlight);
+  margin: 0 4px 6px 0;
+  padding: 4px 10px 4px 10px;
+  border-radius: 4px;
+}
+
 .columns {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
