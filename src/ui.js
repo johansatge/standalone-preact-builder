@@ -96,7 +96,7 @@ function App({ defaultImports }) {
       </h1>
     </header>
     <section class="help">
-      Generate a self-hostable custom JavaScript bundle including Preact and its most popular dependencies,
+      Bundle Preact and its most popular dependencies in a self-hostable, standalone JavaScript file,
       to quickly bootstrap a project without relying on a build system, or a third party CDN.
       <br />
       <a class="github" href="https://github.com/johansatge/standalone-preact#what-is-this-tool">
@@ -122,7 +122,7 @@ function App({ defaultImports }) {
     </section>
     <section class="section">
       <h2 class="section-title">
-        Save the bundle
+        Save the bundle in the project codebase
         ${isLoadingBundle && html`<span class="loader"></span>`}
       </h2>
       <p class="paragraph">
@@ -160,7 +160,7 @@ function App({ defaultImports }) {
       </p>
     </section>
     <section class="section">
-      <h2 class="section-title">Host the bundle and import it in the app</h2>
+      <h2 class="section-title">Import the bundle in the project</h2>
       <pre class="code-wrapper">
         <code
           class="code"
