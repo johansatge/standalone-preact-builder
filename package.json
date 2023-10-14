@@ -1,6 +1,6 @@
 {
   "name": "standalone-preact",
-  "version": "1.0.0",
+  "version": "1.2.1",
   "description": "Standalone, self-hosted Preact bundle generator",
   "author": "Johan Satgé",
   "private": true,

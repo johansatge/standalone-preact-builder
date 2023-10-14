@@ -81,7 +81,7 @@ function getBundleSource(requestedImports, format) {
     bundleSource += `export { ${bundleExports.join(', ')} };\n`
     usage = [
       '<script type="module">',
-      `  import { ${bundleExports.join(', ')} } from "standalone-preact.${format}.__hash__.js"`,
+      `  import { ${bundleExports.join(', ')} } from "./standalone-preact.${format}.__hash__.js"`,
       ...(requestedImports.htm ? getAppUsage() : []),
       '</script>',
     ].join('\n')
