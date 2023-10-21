@@ -112,6 +112,7 @@ body {
 }
 
 .section-title {
+  position: relative;
   font-size: var(--font-size-section-title);
   margin: 0 0 14px 0;
 }
