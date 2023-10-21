@@ -115,6 +115,7 @@ body {
   position: relative;
   font-size: var(--font-size-section-title);
   margin: 0 0 14px 0;
+  padding: 0 28px 0 0;
 }
 
 .version {
@@ -240,7 +241,7 @@ input[type="radio"]:checked::after {
 .loader {
   position: absolute;
   box-sizing: border-box;
-  top: 2px;
+  top: 6px;
   right: 0;
   width: 20px;
   height: 20px;
