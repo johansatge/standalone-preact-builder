@@ -46,6 +46,7 @@ This project uses [semver](http://semver.org/).
 
 | Version | Date | Notes |
 | --- | --- | --- |
+| `1.3.0` | 2024-03-24 | Update deps, add `signals` & `useState` examples |
 | `1.2.1` | 2023-10-14 | Fix ESM example |
 | `1.2.0` | 2023-10-14 | Add format in filename |
 | `1.1.0` | 2023-10-04 | Add md5 substring in code & downloaded file to simplify self-hosting |
