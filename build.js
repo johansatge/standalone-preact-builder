@@ -23,13 +23,13 @@ async function build() {
     await makeDist()
     let html = await fsp.readFile(path.join(srcPath, 'index.html'), 'utf8')
     const preactEcosystem = await makePreactEcosystem()
-    html = html.replace('__preactEcosystem__', JSON.stringify(preactEcosystem))
-    const { uiScript, uiStyles, prismStyles } = await makeUi()
-    // Replace JS with a function to avoid automatic JS pattern replacement, like $&
+    // Replace placeholders with a function to avoid automatic JS pattern replacement, like $&
     // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#specifying_a_string_as_the_replacement
+    html = html.replace('__preactEcosystem__', () => JSON.stringify(preactEcosystem))
+    const { uiScript, uiStyles, prismStyles } = await makeUi()
     html = html.replace('__uiScript__', () => uiScript)
-    html = html.replace('__uiStyles__', uiStyles)
-    html = html.replace('__prismStyles__', prismStyles)
+    html = html.replace('__uiStyles__', () => uiStyles)
+    html = html.replace('__prismStyles__', () => prismStyles)
     await fsp.writeFile(path.join(distPath, 'index.html'), html, 'utf8')
     await fsp.copyFile(path.join(__dirname, '_headers'), path.join(distPath, '_headers'))
     console.log(`Built (${Date.now() - startMs}ms)`)
