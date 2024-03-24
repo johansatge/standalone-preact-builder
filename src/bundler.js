@@ -3,7 +3,7 @@ import md5 from 'crypto-js/md5'
 
 // Init esbuild-wasm as soon as possible
 const esbuildInitPromise = esbuildInitialize({
-  wasmURL: 'https://cdn.jsdelivr.net/npm/esbuild-wasm@0.19.3/esbuild.wasm',
+  wasmURL: 'https://cdn.jsdelivr.net/npm/esbuild-wasm@0.20.2/esbuild.wasm',
 })
 
 // Custom esbuild resolver to map imports (import { x } from "y")
@@ -76,36 +76,95 @@ function getBundleSource(requestedImports, format) {
     bundleSource += `import ${imports} from '${pkg}';\n`
     bundleExports = [...bundleExports, ...requestedImports[pkg]]
   }
-  let usage = ''
+  let usageByFormat = ''
+  const withSignals = requestedImports['@preact/signals'] ? true : false
+  const withUseState = requestedImports['preact/hooks'] && requestedImports['preact/hooks'].includes('useState')
   if (format === 'esm') {
     bundleSource += `export { ${bundleExports.join(', ')} };\n`
-    usage = [
-      '<script type="module">',
-      `  import { ${bundleExports.join(', ')} } from "./standalone-preact.${format}.__hash__.js"`,
-      ...(requestedImports.htm ? getAppUsage() : []),
-      '</script>',
-    ].join('\n')
+    usageByFormat = [
+      '    <script type="module">',
+      `      import { ${bundleExports.join(', ')} } from "./standalone-preact.${format}.__hash__.js"`,
+      ...(requestedImports.htm ? getAppUsageWithHtm(withSignals, withUseState) : getAppUsageWithoutHtm()),
+      '    </script>',
+    ]
   }
   if (format === 'iife') {
     bundleSource += `window.standalonePreact = { ${bundleExports.join(', ')} };\n`
-    usage = [
-      `<script src="standalone-preact.${format}.__hash__.js"></script>`,
-      '<script>',
-      `  const { ${bundleExports.join(', ')} } = window.standalonePreact`,
-      ...(requestedImports.htm ? getAppUsage() : []),
-      '</script>',
-    ].join('\n')
+    usageByFormat = [
+      `    <script src="standalone-preact.${format}.__hash__.js"></script>`,
+      '    <script>',
+      `      const { ${bundleExports.join(', ')} } = window.standalonePreact`,
+      ...(requestedImports.htm ? getAppUsageWithHtm(withSignals, withUseState) : getAppUsageWithoutHtm()),
+      '    </script>',
+    ]
   }
+  const usage = [
+    '<!DOCTYPE html>',
+    '<html lang="en">',
+    '  <head>',
+    '    <title>My Preact App</title>',
+    '    <meta charset="utf-8">',
+    '    <meta name="viewport" content="width=device-width,initial-scale=1">',
+    '  </head>',
+    '  <body>',
+    '    <div class="root"></div>',
+    ...usageByFormat,
+    '  </body>',
+    '</html>',
+  ].join('\n')
   return { bundleSource, bundleComments, usage }
 }
 
-function getAppUsage() {
+function getAppUsageWithHtm(withSignals, withUseState,) {
+  if (withSignals) {
+    return [
+      '      const html = htm.bind(h)',
+      '',
+      '      const count = signal(0)',
+      '      function App(props) {',
+      '        const value = count.value',
+      '        return html`',
+      '          <h1>Hello ${props.name}!</h1>',
+      '          <button onclick=${() => count.value += 1}>Increment (count: ${value})</button>',
+      '        `',
+      '      }',
+      '',
+      '      render(html`<${App} name="World" />`, document.querySelector(\'.root\'))', 
+    ]
+  }
+  if (withUseState) {
+    return [
+      '      const html = htm.bind(h)',
+      '',
+      '      function App(props) {',
+      '        const [value, setValue] = useState(0)',
+      '        return html`',
+      '          <h1>Hello ${props.name}!</h1>',
+      '          <button onclick=${() => setValue(value + 1)}>Increment (count: ${value})</button>',
+      '        `',
+      '      }',
+      '',
+      '      render(html`<${App} name="World" />`, document.querySelector(\'.root\'))', 
+    ]
+  }
   return [
-    '  const html = htm.bind(h)',
-    '  function App (props) {',
-    '    return html`<h1>Hello ${props.name}!</h1>`',
-    '  }',
-    '  render(html`<${App} name="World" />`, document.body)',
+    '      const html = htm.bind(h)',
+    '',
+    '      function App(props) {',
+    '        return html`<h1>Hello ${props.name}!</h1>`',
+    '      }',
+    '',
+    '      render(html`<${App} name="World" />`, document.querySelector(\'.root\'))', 
+  ]
+
+}
+
+function getAppUsageWithoutHtm() {
+  return [
+    '      function App(props) {',
+    '        return h(\'h1\', null, `Hello ${props.name}!`)',
+    '      }',
+    '      render(App({ name: \'World\' }), document.querySelector(\'.root\'))',
   ]
 }
 
