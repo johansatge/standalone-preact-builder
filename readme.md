@@ -36,6 +36,7 @@ When using Preact without build tools, users are advised to rely on a CDN to imp
 - The whole Preact package is usually exposed (it's lightweight, but still)
 - Things may get complicated when other packages are needed: effects, signals, htm... CDNs don't always provide a clear documentation and finding the right URL with the right module to have everything working together is cumbersome
 - What if the CDN is discontinued? Unlikely but still possible in the long term, and developers who go with no build tools usually do so for projects that are there to stay for years; how enjoyable is it to reopen a project after 5 years and finding everything working as expected, without having to update Node, npm, and various packages or build scripts?
+- What if the CDN is down? [_Unpkg CDN down?_](https://github.com/mjackson/unpkg/issues/384)
 - What if the app lives in a restricted environment? Limited network connectivity, intranet with no public internet/CDN access...
 
 This project exists as an answer to those problems.
