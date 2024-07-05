@@ -6,9 +6,37 @@ import Prism from 'prismjs'
 import { buildBundle } from './bundler.js'
 
 const defaultImports = {
-  preact: ['h', 'render'],
-  'preact/hooks': ['useEffect', 'useState'],
-  '@preact/signals': ['signal'],
+  preact: [
+    // https://preactjs.com/guide/v10/components
+    'h',
+    'render',
+    'Component',
+    'Fragment',
+    'createContext',
+    'createRef',
+  ],
+  'preact/hooks': [
+    // https://preactjs.com/guide/v10/hooks
+    'useState',
+    'useReducer',
+    'useMemo',
+    'useCallback',
+    'useRef',
+    'useContext',
+    'useEffect',
+    'useLayoutEffect',
+    'useErrorBoundary',
+  ],
+  '@preact/signals': [
+    // https://preactjs.com/guide/v10/signals/#api
+    'signal',
+    'useSignal',
+    'computed',
+    'useComputed',
+    'effect',
+    'useSignalEffect',
+    'batch',
+  ],
   htm: ['htm'],
 }
 

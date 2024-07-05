@@ -49,6 +49,8 @@ export async function buildBundle(requestedImports, format) {
   const hash = md5(builtCode).toString().substring(0, 7)
   const finalCode = [
     `// Standalone Preact ${getDate()} ${hash} (${format.toUpperCase()})\n`,
+    '// https://github.com/johansatge/standalone-preact-builder\n',
+    '\n',
     bundleComments,
     builtCode,
   ].join('')

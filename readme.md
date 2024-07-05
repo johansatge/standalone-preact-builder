@@ -34,7 +34,7 @@ Preact offers two major advantages compared to the original React:
 
 When using Preact without build tools, users are advised to rely on a CDN to import Preact into their app ([`esm.sh/preact`](https://esm.sh/preact) for instance, and a few other CDNs provide the same feature) **but**:
 - The whole Preact package is usually exposed (it's lightweight, but still)
-- Things may get complicated when other packages are needed: effects, signals, htm... CDNs don't always provide a clear documentation and finding the right URL with the right module to have everything working together is cumbersome
+- Things may get complicated when other packages are needed: effects, signals, [htm](https://github.com/developit/htm/issues/229)... CDNs don't always provide a clear documentation and finding the right URL with the right module to have everything working together is cumbersome
 - What if the CDN is discontinued? Unlikely but still possible in the long term, and developers who go with no build tools usually do so for projects that are there to stay for years; how enjoyable is it to reopen a project after 5 years and finding everything working as expected, without having to update Node, npm, and various packages or build scripts?
 - What if the app lives in a restricted environment? Limited network connectivity, intranet with no public internet/CDN access...
 
@@ -46,6 +46,7 @@ This project uses [semver](http://semver.org/).
 
 | Version | Date | Notes |
 | --- | --- | --- |
+| `1.4.0` | 2024-07-05 | Add more defaults |
 | `1.3.0` | 2024-03-24 | Update deps, add `signals` & `useState` examples |
 | `1.2.1` | 2023-10-14 | Fix ESM example |
 | `1.2.0` | 2023-10-14 | Add format in filename |
