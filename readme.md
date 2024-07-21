@@ -47,6 +47,7 @@ This project uses [semver](http://semver.org/).
 
 | Version | Date | Notes |
 | --- | --- | --- |
+| `1.5.0` | 2024-07-21 | Expose `html`, update deps, add mandatory imports |
 | `1.4.0` | 2024-07-05 | Add more defaults |
 | `1.3.0` | 2024-03-24 | Update deps, add `signals` & `useState` examples |
 | `1.2.1` | 2023-10-14 | Fix ESM example |
