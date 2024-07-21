@@ -39,6 +39,7 @@ const defaultImports = {
   ],
   htm: ['htm'],
 }
+const mandatoryImports = ['h', 'render']
 
 const html = htm.bind(h)
 render(html`<${App} defaultImports=${defaultImports} />`, document.body)
@@ -218,6 +219,7 @@ function ImportsList({ pkg, imports, selectedImports, onImportChange }) {
       <input
         type="checkbox" autocomplete="off"
         data-pkg=${pkg} data-imp=${imp}
+        disabled=${mandatoryImports.includes(imp)}
         checked=${typeof selectedImports[pkg] === 'object' && selectedImports[pkg].includes(imp)}
         value="1"
         onChange=${onImportChange}
