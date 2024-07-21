@@ -39,7 +39,9 @@ const defaultImports = {
   ],
   htm: ['htm'],
 }
-const mandatoryImports = ['h', 'render']
+const mandatoryImports = {
+  preact: ['h', 'render']
+}
 
 const html = htm.bind(h)
 render(html`<${App} defaultImports=${defaultImports} />`, document.body)
@@ -79,7 +81,7 @@ function App({ defaultImports }) {
   }
 
   const onCheckNoImports = () => {
-    setSelectedImports({})
+    setSelectedImports({ ...mandatoryImports })
   }
 
   const onCopyToClipboard = (evt) => {
@@ -142,8 +144,8 @@ function App({ defaultImports }) {
     </section>
     <section class="section">
       <h2 class="section-title">Select imports to include</h2>
-      <button class="check-button" onClick=${onCheckAllImports}>Chek all</button>
-      <button class="check-button" onClick=${onCheckNoImports}>Chek none</button>
+      <button class="check-button" onClick=${onCheckAllImports}>Check all</button>
+      <button class="check-button" onClick=${onCheckNoImports}>Check none</button>
       <div class="columns">
         ${Object.keys(window.preactEcosystem.imports).map((pkg) => html`
           <div class="column" key=${pkg}>
@@ -219,7 +221,7 @@ function ImportsList({ pkg, imports, selectedImports, onImportChange }) {
       <input
         type="checkbox" autocomplete="off"
         data-pkg=${pkg} data-imp=${imp}
-        disabled=${mandatoryImports.includes(imp)}
+        disabled=${mandatoryImports[pkg] && mandatoryImports[pkg].includes(imp)}
         checked=${typeof selectedImports[pkg] === 'object' && selectedImports[pkg].includes(imp)}
         value="1"
         onChange=${onImportChange}

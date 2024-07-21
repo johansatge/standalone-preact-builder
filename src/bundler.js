@@ -78,6 +78,10 @@ function getBundleSource(requestedImports, format) {
     const imports = requestedImports[pkg].includes(pkg) ? pkg : `{ ${requestedImports[pkg].join(', ')} }`
     bundleSource += `import ${imports} from '${pkg}';\n`
     bundleExports = [...bundleExports, ...requestedImports[pkg]]
+    if (pkg === 'htm') {
+      bundleSource += 'const html = htm.bind(h);\n'
+      bundleExports.push('html')
+    }
   }
   let usageByFormat = ''
   const withSignals = requestedImports['@preact/signals'] ? true : false
@@ -110,7 +114,7 @@ function getBundleSource(requestedImports, format) {
     '    <meta name="viewport" content="width=device-width,initial-scale=1">',
     '  </head>',
     '  <body>',
-    '    <div class="root"></div>',
+    '    <div id="root"></div>',
     ...usageByFormat,
     '  </body>',
     '</html>',
@@ -121,7 +125,6 @@ function getBundleSource(requestedImports, format) {
 function getAppUsageWithHtm(withSignals, withUseState,) {
   if (withSignals) {
     return [
-      '      const html = htm.bind(h)',
       '',
       '      const count = signal(0)',
       '      function App(props) {',
@@ -132,12 +135,11 @@ function getAppUsageWithHtm(withSignals, withUseState,) {
       '        `',
       '      }',
       '',
-      '      render(html`<${App} name="World" />`, document.querySelector(\'.root\'))', 
+      '      render(html`<${App} name="World" />`, document.querySelector(\'#root\'))', 
     ]
   }
   if (withUseState) {
     return [
-      '      const html = htm.bind(h)',
       '',
       '      function App(props) {',
       '        const [value, setValue] = useState(0)',
@@ -147,7 +149,7 @@ function getAppUsageWithHtm(withSignals, withUseState,) {
       '        `',
       '      }',
       '',
-      '      render(html`<${App} name="World" />`, document.querySelector(\'.root\'))', 
+      '      render(html`<${App} name="World" />`, document.querySelector(\'#root\'))', 
     ]
   }
   return [
