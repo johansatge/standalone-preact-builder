@@ -1,5 +1,6 @@
 import { build as esbuildBuild, initialize as esbuildInitialize } from 'esbuild-wasm'
 import md5 from 'crypto-js/md5'
+import pkg from '../package.json'
 
 // Init esbuild-wasm as soon as possible
 const esbuildInitPromise = esbuildInitialize({
@@ -48,7 +49,7 @@ export async function buildBundle(requestedImports, format) {
   const builtCode = result.outputFiles[0].text
   const hash = md5(builtCode).toString().substring(0, 7)
   const finalCode = [
-    `// Standalone Preact ${getDate()} ${hash} (${format.toUpperCase()})\n`,
+    `// Standalone Preact ${pkg.version} ${getDate()} ${hash} (${format.toUpperCase()})\n`,
     '// https://github.com/johansatge/standalone-preact-builder\n',
     '\n',
     bundleComments,
