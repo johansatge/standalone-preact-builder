@@ -53,6 +53,7 @@ function App({ defaultImports }) {
   const [bundle, setBundle] = useState({})
   const [isLoadingBundle, setLoadingBundle] = useState(false)
   const [hasCopied, setHasCopied] = useState(false)
+  const [isImportsHelpVisible, setIsImportsHelpVisible] = useState(false)
 
   const onFormatChange = (evt) => {
     setFormat(evt.currentTarget.value)
@@ -144,7 +145,20 @@ function App({ defaultImports }) {
       </a>
     </section>
     <section class="section">
-      <h2 class="section-title">Select imports to include</h2>
+      <h2 class="section-title">
+        Select imports to include
+        <button title="More information" onClick=${() => setIsImportsHelpVisible(!isImportsHelpVisible)}>?</button>
+      </h2>
+      ${isImportsHelpVisible && html`
+        <div class="imports-help">
+          The complete Preact ecosystem is preselected, easiest method is to keep it that way.
+          It's possible to unselect a few imports, but the impact on the bundle size is insignificant,
+          unless you remove everything from Preact signals, for instance.
+          This section was made to experiment with generating a bundle
+          in the browser through <a href="https://esbuild.github.io/api/#browser" target="_blank">esbuild-wasm</a>.<br />
+          Feel free to fine-tune the imports you need to get a fully customized version of Preact though!
+        </div>
+      `}
       <button class="check-button" onClick=${onCheckAllImports}>Check all</button>
       <button class="check-button" onClick=${onCheckNoImports}>Check none</button>
       <div class="columns">

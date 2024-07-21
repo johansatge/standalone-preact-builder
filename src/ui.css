@@ -1,6 +1,6 @@
 :root {
   --color-text: #141414;
-  --color-help: #666666;
+  --color-help: 102, 102, 102;
   --color-header-text: 255, 255, 255;
   --color-highlight: #673ab9;
   --color-section-bg: #f2f2f2;
@@ -16,6 +16,7 @@
   --font-size-help: 1.8rem;
   --font-size-title: 2.4rem;
   --font-size-section-title: 2.2rem;
+  --font-size-imports-help: 1.4rem;
   --font-size-column-title: 1.8rem;
   --font-size-small: 1.1rem;
 }
@@ -89,7 +90,7 @@ body {
 .help {
   margin: 0 15px 20px 15px;
   font-weight: bold;
-  color: var(--color-help);
+  color: rgb(var(--color-help));
   font-size: var(--font-size-help);
 }
 
@@ -116,6 +117,40 @@ body {
   font-size: var(--font-size-section-title);
   margin: 0 0 14px 0;
   padding: 0 28px 0 0;
+}
+
+.section-title button {
+  appearance: none;
+  cursor: pointer;
+  border: 0;
+  font-size: 50%;
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  margin: -3px 0 0 6px;
+  font-family: inherit;
+  font-weight: bold;
+  background: rgb(var(--color-help));
+  color: var(--color-section-bg);
+}
+
+.imports-help {
+  color: rgb(var(--color-help));
+  font-size: var(--font-size-imports-help);
+  line-height: calc(var(--font-size-imports-help) * 1.4);
+  margin: -10px 0 15px 0;
+}
+
+.imports-help a {
+  color: rgb(var(--color-help));
+  display: inline-block;
+  text-decoration: none;
+  border-bottom: 2px dotted rgba(var(--color-help), 0.3);
+}
+
+.imports-help a:hover {
+  border-color: rgba(var(--color-help), 1);
 }
 
 .version {
