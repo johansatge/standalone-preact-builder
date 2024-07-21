@@ -26,6 +26,7 @@ const defaultImports = {
     'useEffect',
     'useLayoutEffect',
     'useErrorBoundary',
+    'useId',
   ],
   '@preact/signals': [
     // https://preactjs.com/guide/v10/signals/#api
