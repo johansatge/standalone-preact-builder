@@ -102,7 +102,7 @@ async function makeUi() {
     entryPoints: [
       path.join(srcPath, 'ui.js'),
       path.join(srcPath, 'ui.css'),
-      path.join(__dirname, 'node_modules/prismjs/themes/prism-funky.css')
+      path.join(__dirname, 'node_modules/prismjs/themes/prism-funky.css'),
     ],
     bundle: true,
     minify: true,

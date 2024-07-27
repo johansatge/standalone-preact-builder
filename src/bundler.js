@@ -31,6 +31,7 @@ function wasmJsResolver() {
 // Function sends back the code, sample usage code and stats
 export async function buildBundle(requestedImports, format) {
   const { bundleSource, bundleComments, usage } = getBundleSource(requestedImports, format)
+  console.log('BUNDLE SOURCE', bundleSource)
   await esbuildInitPromise
   const params = {
     stdin: {
@@ -87,7 +88,7 @@ function getBundleSource(requestedImports, format) {
     }
   }
   let usageByFormat = ''
-  const withSignals = requestedImports['@preact/signals'] ? true : false
+  const withSignals = requestedImports['@preact/signals'] && requestedImports['@preact/signals'].includes('signal')
   const withUseState = requestedImports['preact/hooks'] && requestedImports['preact/hooks'].includes('useState')
   if (format === 'esm') {
     bundleSource += `export { ${bundleExports.join(', ')} };\n`
@@ -160,13 +161,12 @@ function getAppUsageWithHtm(withSignals, withUseState,) {
     ]
   }
   return [
-    '      const html = htm.bind(h)',
     '',
     '      function App(props) {',
     '        return html`<h1>Hello ${props.name}!</h1>`',
     '      }',
     '',
-    '      render(html`<${App} name="World" />`, document.querySelector(\'.root\'))', 
+    '      render(html`<${App} name="World" />`, document.querySelector(\'#root\'))', 
   ]
 
 }
@@ -176,7 +176,7 @@ function getAppUsageWithoutHtm() {
     '      function App(props) {',
     '        return h(\'h1\', null, `Hello ${props.name}!`)',
     '      }',
-    '      render(App({ name: \'World\' }), document.querySelector(\'.root\'))',
+    '      render(App({ name: \'World\' }), document.querySelector(\'#root\'))',
   ]
 }
 
