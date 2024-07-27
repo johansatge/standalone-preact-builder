@@ -71,6 +71,7 @@ export async function buildBundle(requestedImports, format) {
 function getBundleSource(requestedImports, format) {
   let bundleComments = ''
   let bundleExports = []
+  let bundleReadableExports = []
   let bundleSource = ''
   for (const pkg in requestedImports) {
     const pkgVersion = window.preactEcosystem.versions[pkg]
@@ -78,9 +79,11 @@ function getBundleSource(requestedImports, format) {
     const imports = requestedImports[pkg].includes(pkg) ? pkg : `{ ${requestedImports[pkg].join(', ')} }`
     bundleSource += `import ${imports} from '${pkg}';\n`
     bundleExports = [...bundleExports, ...requestedImports[pkg]]
+    bundleReadableExports = [...bundleReadableExports, requestedImports[pkg].join(', ')]
     if (pkg === 'htm') {
       bundleSource += 'const html = htm.bind(h);\n'
       bundleExports.push('html')
+      bundleReadableExports[bundleReadableExports.length - 1] += ', html'
     }
   }
   let usageByFormat = ''
@@ -90,7 +93,9 @@ function getBundleSource(requestedImports, format) {
     bundleSource += `export { ${bundleExports.join(', ')} };\n`
     usageByFormat = [
       '    <script type="module">',
-      `      import { ${bundleExports.join(', ')} } from "./standalone-preact.${format}.__hash__.js"`,
+      '      import {',
+      `        ${bundleReadableExports.join(',\n        ')}`,
+      `      } from "./standalone-preact.${format}.__hash__.js"`,
       ...(requestedImports.htm ? getAppUsageWithHtm(withSignals, withUseState) : getAppUsageWithoutHtm()),
       '    </script>',
     ]
@@ -100,7 +105,9 @@ function getBundleSource(requestedImports, format) {
     usageByFormat = [
       `    <script src="standalone-preact.${format}.__hash__.js"></script>`,
       '    <script>',
-      `      const { ${bundleExports.join(', ')} } = window.standalonePreact`,
+      '      const {',
+      `        ${bundleReadableExports.join(',\n        ')}`,
+      '      } = window.standalonePreact',
       ...(requestedImports.htm ? getAppUsageWithHtm(withSignals, withUseState) : getAppUsageWithoutHtm()),
       '    </script>',
     ]
