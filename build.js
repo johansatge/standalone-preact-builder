@@ -1,14 +1,14 @@
 const esbuild = require('esbuild')
-const fs = require('fs')
-const fsp = require('fs').promises
-const path = require('path')
+const fs = require('node:fs')
+const fsp = require('node:fs').promises
+const path = require('node:path')
+const httpdir = require('httpdir')
 
 const srcPath = path.join(__dirname, 'src')
 const distPath = path.join(__dirname, 'dist')
 
 build()
 if (process.argv.includes('--watch')) {
-  const httpdir = require('/usr/local/lib/node_modules/httpdir')
   const server = httpdir.createServer({ basePath: distPath, httpPort: 9697 })
   server.onStart(({ urls }) => {
     console.log(urls.join('\n'))

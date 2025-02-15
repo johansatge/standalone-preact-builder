@@ -31,7 +31,6 @@ function wasmJsResolver() {
 // Function sends back the code, sample usage code and stats
 export async function buildBundle(requestedImports, format) {
   const { bundleSource, bundleComments, usage } = getBundleSource(requestedImports, format)
-  console.log('BUNDLE SOURCE', bundleSource)
   await esbuildInitPromise
   const params = {
     stdin: {
@@ -139,7 +138,8 @@ function getAppUsageWithHtm(withSignals, withUseState,) {
       '        const value = count.value',
       '        return html`',
       '          <h1>Hello ${props.name}!</h1>',
-      '          <button onclick=${() => count.value += 1}>Increment (count: ${value})</button>',
+      '          <p>Count: ${count.value}</p>',
+      '          <button onclick=${() => count.value += 1}>Increment</button>',
       '        `',
       '      }',
       '',
@@ -153,7 +153,8 @@ function getAppUsageWithHtm(withSignals, withUseState,) {
       '        const [value, setValue] = useState(0)',
       '        return html`',
       '          <h1>Hello ${props.name}!</h1>',
-      '          <button onclick=${() => setValue(value + 1)}>Increment (count: ${value})</button>',
+      '          <p>Count: ${value}</p>',
+      '          <button onclick=${() => setValue(value + 1)}>Increment</button>',
       '        `',
       '      }',
       '',
@@ -162,21 +163,46 @@ function getAppUsageWithHtm(withSignals, withUseState,) {
   }
   return [
     '',
-    '      function App(props) {',
-    '        return html`<h1>Hello ${props.name}!</h1>`',
+    '      class App extends Component {',
+    '        constructor(props) {',
+    '          super(props)',
+    '          this.state = { count: 0 }',
+    '        }',
+    '        incrementCount = () => {',
+    '          this.setState((prevState) => ({ count: prevState.count + 1 }))',
+    '        }',
+    '        render() {',
+    '          return html`',
+    '            <h1>Hello ${this.props.name}!</h1>',
+    '            <p>Count: ${this.state.count}</p>',
+    '            <button onclick=${this.incrementCount}>Increment</button>',
+    '          `',
+    '        }',
     '      }',
-    '',
-    '      render(html`<${App} name="World" />`, document.querySelector(\'#root\'))', 
+    '      render(h(App, { name: \'World\' }), document.querySelector(\'#root\'))',
   ]
-
 }
 
 function getAppUsageWithoutHtm() {
   return [
-    '      function App(props) {',
-    '        return h(\'h1\', null, `Hello ${props.name}!`)',
+    '',
+    '      class App extends Component {',
+    '        constructor(props) {',
+    '          super(props)',
+    '          this.state = { count: 0 }',
+    '        }',
+    '        incrementCount = () => {',
+    '          this.setState((prevState) => ({ count: prevState.count + 1 }))',
+    '        }',
+    '        render() {',
+    '          return h(\'div\', null, [',
+    '            h(\'h1\', null, [`Hello ${this.props.name}!`]),',
+    '            h(\'p\', null, [`Count: ${this.state.count}`]),',
+    '            h(\'button\', { onClick: this.incrementCount }, [\'Increment\']),',
+    '          ])',
+    '        }',
     '      }',
-    '      render(App({ name: \'World\' }), document.querySelector(\'#root\'))',
+    '      render(h(App, { name: \'World\' }), document.querySelector(\'#root\'))',
   ]
 }
 

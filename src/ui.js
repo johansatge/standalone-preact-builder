@@ -41,7 +41,7 @@ const defaultImports = {
   htm: ['htm'],
 }
 const mandatoryImports = {
-  preact: ['h', 'render']
+  preact: ['h', 'render', 'Component']
 }
 
 const html = htm.bind(h)
@@ -159,18 +159,25 @@ function App({ defaultImports }) {
           Feel free to fine-tune the imports you need to get a fully customized version of Preact though!
         </div>
       `}
-      <button class="check-button" onClick=${onCheckAllImports}>Check all</button>
-      <button class="check-button" onClick=${onCheckNoImports}>Check none</button>
+      <button class="check-button" onClick=${onCheckAllImports} disabled=${isLoadingBundle}>
+        Check all
+      </button>
+      <button class="check-button" onClick=${onCheckNoImports} disabled=${isLoadingBundle} data-testid="check-none">
+        Check none
+      </button>
       <div class="columns">
         ${Object.keys(window.preactEcosystem.imports).map((pkg) => html`
           <div class="column" key=${pkg}>
             <h3 class="column-title">
               ${pkg}
-              <span class="version">${window.preactEcosystem.versions[pkg]}</span>
+              <span class="version" data-testid=${`${pkg}-version`}>
+                ${window.preactEcosystem.versions[pkg]}
+              </span>
             </h3>
             <${ImportsList}
               pkg="${pkg}" imports=${window.preactEcosystem.imports[pkg]}
               selectedImports=${selectedImports} onImportChange=${onImportChange}
+              isLoadingBundle=${isLoadingBundle}
             />
           </div>
         `)}
@@ -187,6 +194,8 @@ function App({ defaultImports }) {
             type="radio" name="format" value="esm"
             onChange=${onFormatChange}
             checked=${format === 'esm'}
+            disabled=${isLoadingBundle}
+            data-testid="output-esm"
           />
           ESM
         </label>
@@ -195,6 +204,8 @@ function App({ defaultImports }) {
             type="radio" name="format" value="iife"
             onChange=${onFormatChange}
             checked=${format === 'iife'}
+            disabled=${isLoadingBundle}
+            data-testid="output-iife"
           />
           IIFE
         </label>
@@ -206,10 +217,12 @@ function App({ defaultImports }) {
         ></code>
       </pre>
       <p class="paragraph">
-        <button class="action ${hasCopied ? 'copied' : ''}" onClick=${onCopyToClipboard} disabled=${!bundle.filename}>
+        <button class="action ${hasCopied ? 'copied' : ''}" onClick=${onCopyToClipboard} disabled=${!bundle.filename || isLoadingBundle}>
           Copy to clipboard
         </button>
-        <button class="action" onClick=${onDownload} disabled=${!bundle.filename}>Download file</button>
+        <button class="action" onClick=${onDownload} disabled=${!bundle.filename || isLoadingBundle} data-testid="download-bundle">
+          Download file
+        </button>
         <span class="size">
           Size: ${bundle.sizeKb || 0}Kb (${bundle.sizeGzippedKb || 0}Kb gzipped)
         </span>
@@ -221,6 +234,7 @@ function App({ defaultImports }) {
         <code
           class="code"
           dangerouslySetInnerHTML=${{__html: highlightedBundleUsage}}
+          data-testid=${!isLoadingBundle ? 'html-example' : null }
         ></code>
       </pre>
     </section>
@@ -230,13 +244,14 @@ function App({ defaultImports }) {
   `
 }
 
-function ImportsList({ pkg, imports, selectedImports, onImportChange }) {
+function ImportsList({ pkg, imports, selectedImports, onImportChange, isLoadingBundle }) {
   return imports.map((imp) => html`
     <label class="input-label" key=${pkg + imp}>
       <input
         type="checkbox" autocomplete="off"
         data-pkg=${pkg} data-imp=${imp}
-        disabled=${mandatoryImports[pkg] && mandatoryImports[pkg].includes(imp)}
+        data-testid=${`check-${pkg}-${imp}`}
+        disabled=${isLoadingBundle || (mandatoryImports[pkg] && mandatoryImports[pkg].includes(imp))}
         checked=${typeof selectedImports[pkg] === 'object' && selectedImports[pkg].includes(imp)}
         value="1"
         onChange=${onImportChange}

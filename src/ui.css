@@ -172,6 +172,11 @@ body {
   border-radius: 4px;
 }
 
+.check-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 .columns {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -276,6 +281,11 @@ input[type="radio"]:checked::after {
   height: 6px;
   background: var(--color-input-checked);
   border-radius: 50%;
+}
+
+input[type="radio"]:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .loader {

@@ -5,7 +5,8 @@
   "author": "Johan Satgé",
   "private": true,
   "scripts": {
-    "build": "node build.js"
+    "build": "node build.js",
+    "test-playwright": "npm run build && playwright test"
   },
   "repository": {
     "type": "git",
@@ -25,5 +26,9 @@
     "htm": "^3.1.1",
     "preact": "^10.23.1",
     "prismjs": "^1.29.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.1",
+    "httpdir": "^2.1.0"
   }
 }
