@@ -1,5 +1,7 @@
 # Standalone Preact Builder ⚛️
 
+[![Test](https://github.com/johansatge/standalone-preact-builder/actions/workflows/test.yml/badge.svg)](https://github.com/johansatge/standalone-preact-builder/actions)
+
 > Build custom, self-contained & self-hosted Preact script in the browser
 
 ---
