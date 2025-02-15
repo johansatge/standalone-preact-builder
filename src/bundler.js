@@ -4,7 +4,7 @@ import pkg from '../package.json'
 
 // Init esbuild-wasm as soon as possible
 const esbuildInitPromise = esbuildInitialize({
-  wasmURL: 'https://cdn.jsdelivr.net/npm/esbuild-wasm@0.23.0/esbuild.wasm',
+  wasmURL: 'https://cdn.jsdelivr.net/npm/esbuild-wasm@0.25.0/esbuild.wasm',
 })
 
 // Custom esbuild resolver to map imports (import { x } from "y")
