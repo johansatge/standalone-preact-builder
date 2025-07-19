@@ -19,16 +19,16 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@preact/signals": "^2.0.1",
+    "@preact/signals": "^2.2.1",
     "crypto-js": "^4.2.0",
-    "esbuild": "^0.25.0",
-    "esbuild-wasm": "^0.25.0",
+    "esbuild": "^0.25.7",
+    "esbuild-wasm": "^0.25.7",
     "htm": "^3.1.1",
-    "preact": "^10.25.4",
-    "prismjs": "^1.29.0"
+    "preact": "^10.26.9",
+    "prismjs": "^1.30.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.50.1",
+    "@playwright/test": "^1.54.1",
     "httpdir": "^2.1.0"
   }
 }
