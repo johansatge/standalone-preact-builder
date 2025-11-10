@@ -88,6 +88,7 @@ function getBundleSource(requestedImports, format) {
   }
   let usageByFormat = ''
   const withSignals = requestedImports['@preact/signals'] && requestedImports['@preact/signals'].includes('signal')
+  const withDeepSignal = requestedImports['deepsignal'] && requestedImports['deepsignal'].includes('deepSignal')
   const withUseState = requestedImports['preact/hooks'] && requestedImports['preact/hooks'].includes('useState')
   if (format === 'esm') {
     bundleSource += `export { ${bundleExports.join(', ')} };\n`
@@ -96,7 +97,7 @@ function getBundleSource(requestedImports, format) {
       '      import {',
       `        ${bundleReadableExports.join(',\n        ')}`,
       `      } from "./standalone-preact.${format}.__hash__.js"`,
-      ...(requestedImports.htm ? getAppUsageWithHtm(withSignals, withUseState) : getAppUsageWithoutHtm()),
+      ...(requestedImports.htm ? getAppUsageWithHtm(withSignals, withUseState, withDeepSignal) : getAppUsageWithoutHtm()),
       '    </script>',
     ]
   }
@@ -108,7 +109,7 @@ function getBundleSource(requestedImports, format) {
       '      const {',
       `        ${bundleReadableExports.join(',\n        ')}`,
       '      } = window.standalonePreact',
-      ...(requestedImports.htm ? getAppUsageWithHtm(withSignals, withUseState) : getAppUsageWithoutHtm()),
+      ...(requestedImports.htm ? getAppUsageWithHtm(withSignals, withUseState, withDeepSignal) : getAppUsageWithoutHtm()),
       '    </script>',
     ]
   }
@@ -129,7 +130,22 @@ function getBundleSource(requestedImports, format) {
   return { bundleSource, bundleComments, usage }
 }
 
-function getAppUsageWithHtm(withSignals, withUseState,) {
+function getAppUsageWithHtm(withSignals, withUseState, withDeepSignal) {
+  if (withDeepSignal) {
+    return [
+      '',
+      '      const state = deepSignal({ count: 0 })',
+      '      function App(props) {',
+      '        return html`',
+      '          <h1>Hello ${props.name}!</h1>',
+      '          <p>Count: ${state.count}</p>',
+      '          <button onclick=${() => state.count += 1}>Increment</button>',
+      '        `',
+      '      }',
+      '',
+      '      render(html`<${App} name="World" />`, document.querySelector(\'#root\'))',
+    ]
+  }
   if (withSignals) {
     return [
       '',
@@ -143,7 +159,7 @@ function getAppUsageWithHtm(withSignals, withUseState,) {
       '        `',
       '      }',
       '',
-      '      render(html`<${App} name="World" />`, document.querySelector(\'#root\'))', 
+      '      render(html`<${App} name="World" />`, document.querySelector(\'#root\'))',
     ]
   }
   if (withUseState) {
