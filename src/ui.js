@@ -6,7 +6,7 @@ import Prism from 'prismjs'
 import { buildBundle } from './bundler.js'
 
 const defaultImports = {
-  preact: [
+  'preact': [
     // https://preactjs.com/guide/v10/components
     'h',
     'render',
@@ -38,17 +38,107 @@ const defaultImports = {
     'useSignalEffect',
     'batch',
   ],
-  htm: ['htm'],
+  'htm': ['htm'],
 }
-const mandatoryImports = {
-  preact: ['h', 'render', 'Component']
+
+const baseMandatoryImports = {
+  'preact': ['h', 'render', 'Component']
+}
+
+const conditionalMandatoryImports = {
+  '@preact/signals': {
+    'preact': ['options', 'Component', 'isValidElement', 'Fragment'],
+    'preact/hooks': ['useRef', 'useMemo', 'useEffect', 'useState'],
+  },
+  'htm': {
+    'preact': ['render'],
+  }
 }
 
 const html = htm.bind(h)
+
+function getMandatoryImports(selectedImports) {
+  const mandatory = { ...baseMandatoryImports }
+  const resolvedPackages = new Set()
+  let packagesToResolve = Object.keys(selectedImports).filter(pkg => selectedImports[pkg].length > 0)
+
+  // Resolve dependencies until no new mandatory packages are added
+  while (packagesToResolve.length > 0) {
+    const currentPkg = packagesToResolve.shift()
+    if (resolvedPackages.has(currentPkg)) continue
+    resolvedPackages.add(currentPkg)
+
+    const dependencies = conditionalMandatoryImports[currentPkg]
+    if (dependencies) {
+      for (const depPkg in dependencies) {
+        const newImports = dependencies[depPkg]
+        
+        if (!mandatory[depPkg]) {
+          mandatory[depPkg] = []
+        }
+        
+        const initialLength = mandatory[depPkg].length
+        mandatory[depPkg] = [...new Set([...mandatory[depPkg], ...newImports])]
+
+        // If new imports were added to a package, check if that package itself has mandatory deps
+        if (mandatory[depPkg].length > initialLength && !resolvedPackages.has(depPkg)) {
+          packagesToResolve.push(depPkg)
+        }
+      }
+    }
+  }
+  
+  return mandatory
+}
+
+function reconcileImports(currentImports) {
+  const mandatory = getMandatoryImports(currentImports)
+  const reconciledImports = {}
+
+  for (const pkg in currentImports) {
+    const selected = currentImports[pkg]
+    const mandatoryForPkg = mandatory[pkg] || []
+    
+    // Keep imports that are either mandatory or explicitly selected (i.e., not mandatory)
+    const finalImports = selected.filter(imp => mandatoryForPkg.includes(imp) || !getMandatoryImports({ [pkg]: [imp] })[pkg]?.includes(imp))
+    
+    if (finalImports.length > 0) {
+      reconciledImports[pkg] = [...new Set(finalImports)]
+    }
+  }
+  
+  // Ensure all mandatory imports are present in the final set
+  for (const pkg in mandatory) {
+    if (!reconciledImports[pkg]) {
+      reconciledImports[pkg] = []
+    }
+    mandatory[pkg].forEach(imp => {
+      if (!reconciledImports[pkg].includes(imp)) {
+        reconciledImports[pkg].push(imp)
+      }
+    })
+  }
+
+  return reconciledImports
+}
+
+function getInitialSelectedImports(defaultImports) {
+  const mandatory = getMandatoryImports(defaultImports)
+  const initialImports = { ...defaultImports }
+
+  for (const pkg in mandatory) {
+    if (!initialImports[pkg]) {
+      initialImports[pkg] = []
+    }
+    initialImports[pkg] = [...new Set([...initialImports[pkg], ...mandatory[pkg]])]
+  }
+  return initialImports
+}
+
 render(html`<${App} defaultImports=${defaultImports} />`, document.body)
 
 function App({ defaultImports }) {
-  const [selectedImports, setSelectedImports] = useState(defaultImports)
+  const [selectedImports, setSelectedImports] = useState(getInitialSelectedImports(defaultImports))
   const [format, setFormat] = useState('esm')
   const [bundle, setBundle] = useState({})
   const [isLoadingBundle, setLoadingBundle] = useState(false)
@@ -63,6 +153,8 @@ function App({ defaultImports }) {
     const newSelectedImports = {...selectedImports}
     const pkg = evt.currentTarget.dataset.pkg
     const imp = evt.currentTarget.dataset.imp
+    
+    // 1. Toggle the selected import
     if (evt.currentTarget.checked) {
       if (typeof newSelectedImports[pkg] === 'undefined') {
         newSelectedImports[pkg] = []
@@ -71,11 +163,10 @@ function App({ defaultImports }) {
     } else {
       const index = newSelectedImports[pkg].indexOf(imp)
       newSelectedImports[pkg].splice(index, 1)
-      if (newSelectedImports[pkg].length === 0) {
-        delete newSelectedImports[pkg]
-      }
     }
-    setSelectedImports(newSelectedImports)
+
+    // 2. Reconcile imports to ensure mandatory dependencies are met and unnecessary imports are removed
+    setSelectedImports(reconcileImports(newSelectedImports))
   }
 
   const onCheckAllImports = () => {
@@ -83,7 +174,7 @@ function App({ defaultImports }) {
   }
 
   const onCheckNoImports = () => {
-    setSelectedImports({ ...mandatoryImports })
+    setSelectedImports(reconcileImports(baseMandatoryImports))
   }
 
   const onCopyToClipboard = (evt) => {
@@ -251,7 +342,7 @@ function ImportsList({ pkg, imports, selectedImports, onImportChange, isLoadingB
         type="checkbox" autocomplete="off"
         data-pkg=${pkg} data-imp=${imp}
         data-testid=${`check-${pkg}-${imp}`}
-        disabled=${isLoadingBundle || (mandatoryImports[pkg] && mandatoryImports[pkg].includes(imp))}
+        disabled=${isLoadingBundle || getMandatoryImports(selectedImports)[pkg]?.includes(imp)}
         checked=${typeof selectedImports[pkg] === 'object' && selectedImports[pkg].includes(imp)}
         value="1"
         onChange=${onImportChange}
