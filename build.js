@@ -59,12 +59,14 @@ async function makePreactEcosystem() {
       'preact': Object.keys(require('preact')),
       'preact/hooks': Object.keys(require('preact/hooks')),
       '@preact/signals': Object.keys(require('@preact/signals')),
+      'deepsignal': Object.keys(require('deepsignal')),
       'htm': ['htm'],
     },
     versions: {
       'preact': await getPackageVersion('preact'),
       'preact/hooks': await getPackageVersion('preact/hooks'),
       '@preact/signals': await getPackageVersion('@preact/signals'),
+      'deepsignal': await getPackageVersion('deepsignal'),
       'htm': await getPackageVersion('htm'),
     },
     jsModules: {}
@@ -78,7 +80,7 @@ async function makePreactEcosystem() {
   // like "export * from 'preact'", but this was preventing esbuild-wasm from tree shaking each module
   // when importing back each property in the final JS
   // (See https://github.com/evanw/esbuild/issues/1420)
-  const neededJsModules = ['preact', 'preact/hooks', '@preact/signals', '@preact/signals-core', 'htm']
+  const neededJsModules = ['preact', 'preact/hooks', '@preact/signals', '@preact/signals-core', 'deepsignal', 'htm']
   for (const mod of neededJsModules) {
     ecosystem.jsModules[mod] = await getJsModuleFromNodeModule(mod)
   }

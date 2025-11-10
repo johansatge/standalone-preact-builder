@@ -39,6 +39,13 @@ const defaultImports = {
     'batch',
   ],
   'htm': ['htm'],
+  'deepsignal': [
+    // https://github.com/johansatge/deepsignal#api
+    // 'deepSignal',
+    // 'peek',
+    // 'shallow',
+    // 'useDeepSignal',
+  ],
 }
 
 const baseMandatoryImports = {
@@ -49,6 +56,10 @@ const conditionalMandatoryImports = {
   '@preact/signals': {
     'preact': ['options', 'Component', 'isValidElement', 'Fragment'],
     'preact/hooks': ['useRef', 'useMemo', 'useEffect', 'useState'],
+  },
+  'deepsignal': {
+    'preact/hooks': ['useMemo'],
+    '@preact/signals': ['computed', 'signal', 'Signal']
   },
   'htm': {
     'preact': ['render'],
