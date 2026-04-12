@@ -89,6 +89,7 @@ function getBundleSource(requestedImports, format) {
   let usageByFormat = ''
   const withSignals = requestedImports['@preact/signals'] && requestedImports['@preact/signals'].includes('signal')
   const withUseState = requestedImports['preact/hooks'] && requestedImports['preact/hooks'].includes('useState')
+  const withRouter = requestedImports['preact-iso'] && ['Router', 'Route', 'LocationProvider'].every((e) => requestedImports['preact-iso'].includes(e))
   if (format === 'esm') {
     bundleSource += `export { ${bundleExports.join(', ')} };\n`
     usageByFormat = [
@@ -96,7 +97,7 @@ function getBundleSource(requestedImports, format) {
       '      import {',
       `        ${bundleReadableExports.join(',\n        ')}`,
       `      } from "./standalone-preact.${format}.__hash__.js"`,
-      ...(requestedImports.htm ? getAppUsageWithHtm(withSignals, withUseState) : getAppUsageWithoutHtm()),
+      ...(requestedImports.htm ? getAppUsageWithHtm(withSignals, withUseState, withRouter) : getAppUsageWithoutHtm()),
       '    </script>',
     ]
   }
@@ -108,7 +109,7 @@ function getBundleSource(requestedImports, format) {
       '      const {',
       `        ${bundleReadableExports.join(',\n        ')}`,
       '      } = window.standalonePreact',
-      ...(requestedImports.htm ? getAppUsageWithHtm(withSignals, withUseState) : getAppUsageWithoutHtm()),
+      ...(requestedImports.htm ? getAppUsageWithHtm(withSignals, withUseState, withRouter) : getAppUsageWithoutHtm()),
       '    </script>',
     ]
   }
@@ -129,7 +130,54 @@ function getBundleSource(requestedImports, format) {
   return { bundleSource, bundleComments, usage }
 }
 
-function getAppUsageWithHtm(withSignals, withUseState,) {
+function getAppUsageWithHtm(withSignals, withUseState, withRouter) {
+  if (withRouter) {
+    const countLine = withSignals
+      ? '      const count = signal(0)'
+      : withUseState
+        ? '      // count state is defined inside Home with useState'
+        : null
+    const homeFn = withSignals
+      ? [
+          '      function Home() {',
+          '        return html`',
+          '          <h1>Hello World!</h1>',
+          '          <p>Count: ${count.value}</p>',
+          '          <button onclick=${() => count.value += 1}>Increment</button>',
+          '        `',
+          '      }',
+        ]
+      : withUseState
+        ? [
+            '      function Home() {',
+            '        const [count, setCount] = useState(0)',
+            '        return html`',
+            '          <h1>Hello World!</h1>',
+            '          <p>Count: ${count}</p>',
+            '          <button onclick=${() => setCount(count + 1)}>Increment</button>',
+            '        `',
+            '      }',
+          ]
+        : [
+            '      function Home() {',
+            '        return html`<h1>Hello World!</h1>`',
+            '      }',
+          ]
+    return [
+      '',
+      ...(countLine ? [countLine] : []),
+      ...homeFn,
+      '',
+      '      render(html`',
+      '        <${LocationProvider}>',
+      '          <${Router}>',
+      '            <${Route} path="/" component=${Home} />',
+      '            <${Route} default component=${Home} />',
+      '          </${Router}>',
+      '        </${LocationProvider}>',
+      '      `, document.querySelector(\'#root\'))',
+    ]
+  }
   if (withSignals) {
     return [
       '',

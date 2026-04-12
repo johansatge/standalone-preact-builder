@@ -50,6 +50,26 @@ for(const output of ['esm', 'iife']) {
 }
 
 for(const output of ['esm', 'iife']) {
+  test(`Generate a Preact bundle with htm & preact-iso router (${output})`, async({ page }) => {
+    await page.goto('index.html')
+    // Configure output (IIFE / ESM)
+    await page.getByTestId(`output-${output}`).click()
+    // Check Preact mandatory imports & htm & useState & preact-iso router
+    await page.getByTestId('check-none').click()
+    await page.getByTestId('check-htm-htm').click()
+    await page.getByTestId('check-preact/hooks-useState').click()
+    await page.getByTestId('check-preact-iso-Router').click()
+    await page.getByTestId('check-preact-iso-Route').click()
+    await page.getByTestId('check-preact-iso-LocationProvider').click()
+    // Test bundle (static contents & run example page)
+    const preactBundle = await testBundleAndExamplePage({ page })
+    expect(preactBundle).toContain('// htm')
+    expect(preactBundle).toContain('// preact/hooks')
+    expect(preactBundle).toContain('// preact-iso')
+  })
+}
+
+for(const output of ['esm', 'iife']) {
   test(`Generate a Preact bundle with htm & signals (${output})`, async({ page }) => {
     await page.goto('index.html')
     // Configure output (IIFE / ESM)

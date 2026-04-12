@@ -60,12 +60,14 @@ async function makePreactEcosystem() {
       'preact/hooks': Object.keys(require('preact/hooks')),
       '@preact/signals': Object.keys(require('@preact/signals')),
       'htm': ['htm'],
+      'preact-iso': Object.keys(require('preact-iso')),
     },
     versions: {
       'preact': await getPackageVersion('preact'),
       'preact/hooks': await getPackageVersion('preact/hooks'),
       '@preact/signals': await getPackageVersion('@preact/signals'),
       'htm': await getPackageVersion('htm'),
+      'preact-iso': await getPackageVersion('preact-iso'),
     },
     jsModules: {}
   }
@@ -82,6 +84,9 @@ async function makePreactEcosystem() {
   for (const mod of neededJsModules) {
     ecosystem.jsModules[mod] = await getJsModuleFromNodeModule(mod)
   }
+  // preact-iso uses relative imports between its source files, so it must be pre-bundled
+  // into a single ESM file at build time (with preact marked as external)
+  ecosystem.jsModules['preact-iso'] = await getBundledJsModule('preact-iso', ['preact'])
   return ecosystem
 }
 
@@ -89,6 +94,17 @@ async function getPackageVersion(pkg) {
   const pkgJsonPath = path.join(__dirname, 'node_modules', pkg, 'package.json')
   const pkgJson = JSON.parse(await fsp.readFile(pkgJsonPath, 'utf8'))
   return pkgJson.version
+}
+
+async function getBundledJsModule(pkg, externals) {
+  const result = await esbuild.build({
+    entryPoints: [require.resolve(pkg)],
+    bundle: true,
+    format: 'esm',
+    write: false,
+    external: externals || [],
+  })
+  return result.outputFiles[0].text
 }
 
 async function getJsModuleFromNodeModule(pkg) {
