@@ -5,6 +5,7 @@ for(const output of ['esm', 'iife']) {
   for(const selection of ['default', 'all']) {
     test(`Check generated bundle exports for ${selection} imports (${output})`, async({ page }) => {
       await page.goto('index.html')
+      await expect(page.getByTestId('preact/hooks-version')).toHaveText(await page.getByTestId('preact-version').innerText())
       await page.getByTestId(`output-${output}`).click()
       if (selection === 'all') {
         await page.getByRole('button', { name: 'Check all' }).click()

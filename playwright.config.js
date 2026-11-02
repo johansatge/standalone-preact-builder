@@ -1,5 +1,4 @@
 const { defineConfig } = require('@playwright/test')
-const httpdir = require('httpdir')
 
 export default defineConfig({
   use: {

@@ -7,7 +7,7 @@ import { buildBundle } from './bundler.js'
 
 const defaultImports = {
   preact: [
-    // https://preactjs.com/guide/v10/components
+    // https://preactjs.com/guide/v11/components
     'h',
     'render',
     'Component',
@@ -16,7 +16,7 @@ const defaultImports = {
     'createRef',
   ],
   'preact/hooks': [
-    // https://preactjs.com/guide/v10/hooks
+    // https://preactjs.com/guide/v11/hooks
     'useState',
     'useReducer',
     'useMemo',
@@ -29,7 +29,7 @@ const defaultImports = {
     'useId',
   ],
   '@preact/signals': [
-    // https://preactjs.com/guide/v10/signals/#api
+    // https://preactjs.com/guide/v11/signals/#api
     'signal',
     'useSignal',
     'computed',

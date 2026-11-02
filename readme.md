@@ -28,11 +28,15 @@ The generator runs in the browser; no installation is needed.
 - Download the generated script or copy it to the clipboard
 - Self-host it: it's small enough to be committed in the app's Git project, and deployed with the rest of the app
 
+### Upgrading bundles from Preact 10 to 11
+
+Preact 11 includes breaking changes that may affect existing apps when replacing a generated bundle. For example, numeric styles no longer receive `px` automatically, `defaultProps` are no longer supported by Preact core, refs are forwarded to components, and the third argument to `render()` has been removed. Review the [Preact 11 upgrade guide](https://preactjs.com/guide/v11/upgrade-guide/) before upgrading an existing app.
+
 ## What is the point?
 
 Preact offers two major advantages compared to the original React:
 - It's lightweight
-- It offers a [no build tools route](https://preactjs.com/guide/v10/getting-started#no-build-tools-route)
+- It offers a [no build tools route](https://preactjs.com/guide/v11/getting-started#no-build-tools-route)
 
 When using Preact without build tools, users are advised to rely on a CDN to import Preact into their app ([`esm.sh/preact`](https://esm.sh/preact) for instance, and a few other CDNs provide the same feature) **but**:
 - The whole Preact package is usually exposed (it's lightweight, but still)
