@@ -34,7 +34,8 @@ async function build() {
     await fsp.copyFile(path.join(__dirname, '_headers'), path.join(distPath, '_headers'))
     console.log(`Built (${Date.now() - startMs}ms)`)
   } catch (error) {
-    console.log(`Build error: ${error.message} (${error.stack})`)
+    console.error(`Build error: ${error.message} (${error.stack})`)
+    process.exitCode = 1
   }
 }
 

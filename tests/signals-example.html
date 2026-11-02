@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="utf-8"><title>Signals example</title></head>
+  <body>
+    <div id="root"></div>
+    <p id="signal-effect"></p>
+    <p id="hook-effect"></p>
+    __bundleScript__
+    <script __scriptType__>
+      __bundleImports__
+
+      const external = signal(1)
+      const doubled = computed(() => external.value * 2)
+      effect(() => { document.querySelector('#signal-effect').textContent = doubled.value })
+
+      function App() {
+        const [count, setCount] = useState(0)
+        const local = useSignal(1)
+        const total = useComputed(() => local.value + doubled.value)
+        useSignalEffect(() => { document.querySelector('#hook-effect').textContent = total.value })
+        return h('button', {
+          onClick: () => { setCount(count + 1); local.value++; external.value++ },
+        }, `${count}:${total.value}`)
+      }
+      render(h(App), document.querySelector('#root'))
+    </script>
+  </body>
+</html>

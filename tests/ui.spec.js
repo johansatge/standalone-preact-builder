@@ -1,5 +1,44 @@
 const { test, expect } = require('@playwright/test')
-const { testBundleAndExamplePage } = require('./helpers.js')
+const { downloadPreactBundle, testBundleAndExamplePage, testHooksAndSignals } = require('./helpers.js')
+
+for(const output of ['esm', 'iife']) {
+  for(const selection of ['default', 'all']) {
+    test(`Check generated bundle exports for ${selection} imports (${output})`, async({ page }) => {
+      await page.goto('index.html')
+      await page.getByTestId(`output-${output}`).click()
+      if (selection === 'all') {
+        await page.getByRole('button', { name: 'Check all' }).click()
+      }
+      const selectedImports = await page.locator('input[data-imp]:checked').evaluateAll((inputs) =>
+        inputs.map((input) => input.dataset.imp)
+      )
+      if (selectedImports.includes('htm')) selectedImports.push('html')
+      const { preactBundle } = await downloadPreactBundle({ page })
+      const exports = await page.evaluate(async ({ preactBundle, output }) => {
+        if (output === 'esm') {
+          const url = URL.createObjectURL(new Blob([preactBundle], { type: 'text/javascript' }))
+          try {
+            return Object.keys(await import(url))
+          } finally {
+            URL.revokeObjectURL(url)
+          }
+        }
+        const script = document.createElement('script')
+        script.textContent = preactBundle
+        document.body.appendChild(script)
+        script.remove()
+        return Object.keys(window.standalonePreact)
+      }, { preactBundle, output })
+      expect(exports.sort()).toEqual(selectedImports.sort())
+    })
+  }
+
+  test(`Run hooks and signals together in a generated bundle (${output})`, async({ page }) => {
+    await page.goto('index.html')
+    await page.getByTestId(`output-${output}`).click()
+    await testHooksAndSignals({ page, output })
+  })
+}
 
 for(const output of ['esm', 'iife']) {
   test(`Generate a minimal Preact bundle (${output})`, async({ page }) => {
