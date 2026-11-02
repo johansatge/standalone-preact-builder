@@ -1,10 +1,10 @@
-import { build as esbuildBuild, initialize as esbuildInitialize } from 'esbuild-wasm'
+import { build as esbuildBuild, initialize as esbuildInitialize, version as esbuildVersion } from 'esbuild-wasm'
 import md5 from 'crypto-js/md5'
 import pkg from '../package.json'
 
 // Init esbuild-wasm as soon as possible
 const esbuildInitPromise = esbuildInitialize({
-  wasmURL: 'https://cdn.jsdelivr.net/npm/esbuild-wasm@0.25.7/esbuild.wasm',
+  wasmURL: `https://cdn.jsdelivr.net/npm/esbuild-wasm@${esbuildVersion}/esbuild.wasm`,
 })
 
 // Custom esbuild resolver to map imports (import { x } from "y")

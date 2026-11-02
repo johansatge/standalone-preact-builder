@@ -2,19 +2,23 @@ const esbuild = require('esbuild')
 const fs = require('node:fs')
 const fsp = require('node:fs').promises
 const path = require('node:path')
-const httpdir = require('httpdir')
 
 const srcPath = path.join(__dirname, 'src')
 const distPath = path.join(__dirname, 'dist')
 
 build()
 if (process.argv.includes('--watch')) {
+  startServer()
+  buildOnChange()
+}
+
+async function startServer() {
+  const httpdir = await import('httpdir')
   const server = httpdir.createServer({ basePath: distPath, httpPort: 9697 })
   server.onStart(({ urls }) => {
     console.log(urls.join('\n'))
   })
   server.start()
-  buildOnChange()
 }
 
 async function build() {
@@ -57,14 +61,14 @@ async function makeDist() {
 async function makePreactEcosystem() {
   const ecosystem = {
     imports: {
-      'preact': Object.keys(require('preact')),
-      'preact/hooks': Object.keys(require('preact/hooks')),
-      '@preact/signals': Object.keys(require('@preact/signals')),
+      'preact': Object.keys(await import('preact')),
+      'preact/hooks': Object.keys(await import('preact/hooks')),
+      '@preact/signals': Object.keys(await import('@preact/signals')),
       'htm': ['htm'],
     },
     versions: {
       'preact': await getPackageVersion('preact'),
-      'preact/hooks': await getPackageVersion('preact/hooks'),
+      'preact/hooks': await getPackageVersion('preact'),
       '@preact/signals': await getPackageVersion('@preact/signals'),
       'htm': await getPackageVersion('htm'),
     },
