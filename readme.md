@@ -8,6 +8,7 @@
 
 * [What is this tool](#what-is-this-tool)
 * [Usage](#usage)
+  * [Upgrading from Preact 10 to 11](#upgrading-from-preact-10-to-11)
 * [What is the point?](#what-is-the-point)
 * [Changelog](#changelog)
 * [License](#license)
@@ -28,7 +29,7 @@ The generator runs in the browser; no installation is needed.
 - Download the generated script or copy it to the clipboard
 - Self-host it: it's small enough to be committed in the app's Git project, and deployed with the rest of the app
 
-### Upgrading bundles from Preact 10 to 11
+### Upgrading from Preact 10 to 11
 
 Preact 11 includes breaking changes that may affect existing apps when replacing a generated bundle. For example, numeric styles no longer receive `px` automatically, `defaultProps` are no longer supported by Preact core, refs are forwarded to components, and the third argument to `render()` has been removed. Review the [Preact 11 upgrade guide](https://preactjs.com/guide/v11/upgrade-guide/) before upgrading an existing app.
 
@@ -53,6 +54,7 @@ This project uses [semver](http://semver.org/).
 
 | Version | Date | Notes |
 | --- | --- | --- |
+| `3.0.0` | 2026-11-02 | Preact 11 |
 | `2.0.0` | 2025-02-15 | Add Playwright tests, update deps, make `Component` mandatory |
 | `1.5.0` | 2024-07-21 | Expose `html`, update deps, add mandatory imports |
 | `1.4.0` | 2024-07-05 | Add more defaults |
