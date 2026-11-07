@@ -36,6 +36,7 @@ async function build() {
     html = html.replace('__prismStyles__', () => prismStyles)
     await fsp.writeFile(path.join(distPath, 'index.html'), html, 'utf8')
     await fsp.copyFile(path.join(__dirname, '_headers'), path.join(distPath, '_headers'))
+    await fsp.copyFile(path.join(srcPath, '404.html'), path.join(distPath, '404.html'))
     console.log(`Built (${Date.now() - startMs}ms)`)
   } catch (error) {
     console.error(`Build error: ${error.message} (${error.stack})`)
